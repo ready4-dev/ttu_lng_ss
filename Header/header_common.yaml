@@ -1,0 +1,13 @@
+title: Title of manuscript
+author:
+  - Alejandra Scienceace:
+      email: fake@email.com
+      institute: [AwesomeUni]
+      correspondence: true
+  - name: Fion Researchchamp
+    email: notareal@email.com
+    institute: [AugustInstitute]
+institute:
+  - AwesomeUni: Awesome University, Somewhere, Earth
+  - AugustInstitute: August Institute, Elsewhere, Earth
+keywords:  add, all, relevant, keywords, here

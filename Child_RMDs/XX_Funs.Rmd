@@ -1,0 +1,75 @@
+---
+title: "MA_Results"
+author: "Matthew Hamilton"
+date: "13/10/2020"
+output: html_document
+---
+```{r echo = F}
+library(officedown)
+library(magrittr)
+```
+
+```{r results = 'asis'}
+# Adapted from: https://stackoverflow.com/questions/15036754/r-package-xtable-how-to-create-a-latextable-with-multiple-rows-and-columns-from
+get_pkg_citn <- function(pkg_nm_1L_chr){
+  citn_chr <- suppressWarnings(citation(pkg_nm_1L_chr)) %>% capture.output()
+  start_idx_1L_int <- 4
+  end_idx_1L_int <- which(citn_chr== "")[which(which(citn_chr== "")>start_idx_1L_int)[1]]-1
+  citn_1L_chr<- citn_chr[start_idx_1L_int:end_idx_1L_int] %>% paste0(collapse = "")
+  return(citn_1L_chr)
+}
+transform_tb_for_merged_col_1 <- function(df,
+                                          output_type_1L_chr = "PDF"){
+    df[[1]] <- as.character(df[[1]])
+    rle.lengths <- rle(df[[1]])$lengths
+    first <- !duplicated(df[[1]])
+    df[[1]][!first] <- ""
+    if(output_type_1L_chr == "PDF")
+      df[[1]][first] <- paste0("\\midrule\\multirow{", rle.lengths, "}{*}{\\textbf{", df[[1]][first], "}}")
+    return(df)
+}
+make_bl_fup_add_to_row_ls <-  function(df,
+                                       n_at_bl_1L_int,
+                                       n_at_fup_1L_int){
+  add_to_row_ls <- list(pos = list(-1, nrow(df)),
+                        command = c(paste("\\toprule \n",  
+                                          paste0("\\multicolumn{2}{c}{} & \\multicolumn{2}{c}{\\textbf{Baseline (N=",n_at_bl_1L_int,")}} & \\multicolumn{2}{c}{\\textbf{Follow-up (N=",n_at_fup_1L_int,")}} \\\\\n")),
+                                    paste("\\bottomrule \n"  
+                                          )
+                                    )
+                        )
+  return(add_to_row_ls)
+}
+```
+
+```{r}
+print_table_xx <- function(data_tb,
+                           pdf_output_lgl,
+                           caption_chr,
+                           label,
+                           hline.after,
+                           sanitize.text.function = getOption("xtable.sanitize.text.function", NULL),
+                           addtorow){
+   data_x_tb <- data_tb %>%
+  xtable::xtable(caption = caption_chr, label = label)
+if(pdf_output_lgl){
+ data_x_tb %>%
+  print(comment = F,
+        floating = TRUE, #floating.environment = "sidewaystable",
+        hline.after = hline.after,
+        caption.placement = "top",
+        sanitize.text.function = sanitize.text.function,
+        add.to.row = addtorow, 
+        include.colnames = FALSE,
+        include.rownames=FALSE#,scalebox = 0.75
+        ) 
+}else{
+  data_tb %>%
+    kableExtra::kable(escape = F,
+        caption = caption_chr) %>%
+      kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed"), 
+                                full_width = F, 
+                                position = "left")
+}
+}
+```

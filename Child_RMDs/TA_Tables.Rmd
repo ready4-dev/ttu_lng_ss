@@ -1,0 +1,138 @@
+---
+title: "MA_Results"
+author: "Matthew Hamilton"
+date: "13/10/2020"
+output: html_document
+---
+
+```{r tenfoldolstb, tab.cap='10-fold cross-validated model fitting index for different OLS or GLM models for using PHQ9 total scores as predictor with the baseline data', tab.id = 'tenfoldolstb', echo = F, results = 'asis'}
+df <- results_ls$tables_ls$tenf_phq9 %>% 
+  dplyr::mutate(Model = gsub('"', '', Model)) %>%
+  dplyr::mutate(dplyr::across(.cols = dplyr::everything(), ~ .x %>%
+                                stringr::str_replace_all("  NA",NA_character_)))
+if(params$output_type_1L_chr == "PDF"){
+add_to_row_ls <- list()
+add_to_row_ls$pos <- list(0,0,0,nrow(df))
+add_to_row_ls$command <- c("&\\multicolumn{3}{c}{Training model fit}&\\multicolumn{3}{c}{Testing model fit}\\\\\n",
+                      "&\\multicolumn{3}{c}{(averaged over 10 folds)}&\\multicolumn{3}{c}{(averaged over 10 folds)}\\\\\n",
+                      "Model & R2	& RMSE & MAE &  R2	& RMSE & MAE  \\\\\n",
+                      paste0("\\hline\n","{\\footnotesize * RMSE: Root Mean Squared Error; MAE: Mean Absolute Error}\n"))
+
+df$Model <- df$Model %>% purrr::map_chr(~ifelse(.x %in% c("GLM","OLS"),paste0("\\textbf{",.x,"}"),.x))
+}else{
+  add_to_row_ls <- NULL
+}
+df %>%
+  ready4show::print_table(output_type_1L_chr = params$output_type_1L_chr,
+                          caption_1L_chr = knitr::opts_current$get("tab.cap"),
+                          mkdn_tbl_ref_1L_chr = paste0("tab:",knitr::opts_current$get("tab.id")),
+                          use_rdocx_1L_lgl = ifelse(params$output_type_1L_chr=="Word",T,F),
+                          add_to_row_ls = add_to_row_ls,
+                          hline_after_ls = c(-1,0),
+                          sanitize_fn = force) 
+```
+\newpage
+```{r tenfoldglmtb, tab.cap='10-fold cross-validated model fitting index for different candidate predictors estimated using GLM with Gaussian distribution and log link with the baseline data', tab.id = 'tenfoldglmtb', echo = F, results = 'asis'}
+df <- results_ls$tables_ls$tenf_glm 
+if(params$output_type_1L_chr == "PDF"){
+  add_to_row_ls <- list()
+add_to_row_ls$pos <- list(0,0,0,nrow(df))
+add_to_row_ls$command <- c("&\\multicolumn{3}{c}{Training model fit}&\\multicolumn{3}{c}{Testing model fit}\\\\\n",
+                      "&\\multicolumn{3}{c}{(averaged over 10 folds)}&\\multicolumn{3}{c}{(averaged over 10 folds)}\\\\\n",
+                      "Model & R2	& RMSE & MAE &  R2	& RMSE & MAE  \\\\\n",
+                      paste0("\\hline\n","{\\footnotesize * RMSE: Root Mean Squared Error; MAE: Mean Absolute Error}\n"))
+  df$Predictor <- df$Predictor %>% purrr::map_chr(~paste0("\\textbf{",.x,"}"))
+}else{
+  add_to_row_ls <- NULL
+}
+
+df %>%
+  ready4show::print_table(output_type_1L_chr = params$output_type_1L_chr,
+                          caption_1L_chr = knitr::opts_current$get("tab.cap"),
+                          mkdn_tbl_ref_1L_chr = paste0("tab:",knitr::opts_current$get("tab.id")),
+                          use_rdocx_1L_lgl = ifelse(params$output_type_1L_chr=="Word",T,F),
+                          add_to_row_ls = add_to_row_ls,
+                          hline_after_ls = c(-1,0),
+                          sanitize_fn = force) 
+
+```
+\newpage
+```{r coefslongtb, tab.cap='Estimated coefficients from longitudinal TTU models based on candidate predictors and SOFAS score using LLM (with cloglog transformation)', tab.id = 'coefslongtb', echo = F, results = 'asis'}
+df <- results_ls$tables_ls$mdl_type_2_covar_mdls_tb %>%
+  dplyr::mutate(Parameter = Parameter %>% purrr::map_chr(~stringr::str_replace_all(.x,"_"," ")))
+if(params$output_type_1L_chr == "PDF"){
+  add_to_row_ls <- list()
+add_to_row_ls$pos <- list(0, nrow(df))
+add_to_row_ls$command <- c("Parameter* & Estimate	& SE	& 95CI & R2	& Sigma\\\\\n",
+                      paste0("\\hline\n","{\\footnotesize * Calculated as original scores divided by 100}\n"))
+  df$Parameter <- df$Parameter %>% purrr::map_chr(~ifelse(endsWith(.x," model"),paste0("\\textbf{",.x,"}"),.x))
+}else{
+  add_to_row_ls <- NULL
+}
+df %>%
+  ready4show::print_table(output_type_1L_chr = params$output_type_1L_chr,
+                          caption_1L_chr = knitr::opts_current$get("tab.cap"),
+                          mkdn_tbl_ref_1L_chr = paste0("tab:",knitr::opts_current$get("tab.id")),
+                          use_rdocx_1L_lgl = ifelse(params$output_type_1L_chr=="Word",T,F),
+                          add_to_row_ls = add_to_row_ls,
+                          hline_after_ls = c(-1,0),
+                          sanitize_fn = force)
+```
+\newpage
+```{r coefsglmtb, tab.cap='Estimated coefficients from longitudinal TTU models based on individual candidate predictors and SOFAS score using GLM (Gaussian distribution with log link)', tab.id = 'coefsglmtb', echo = F, results = 'asis'}
+df <- results_ls$tables_ls$mdl_type_1_covar_mdls_tb %>%
+  dplyr::mutate(Parameter = Parameter %>% purrr::map_chr(~stringr::str_replace_all(.x,"_"," ")))
+if(params$output_type_1L_chr == "PDF"){
+  add_to_row_ls <- list()
+add_to_row_ls$pos <- list(0, nrow(df))
+add_to_row_ls$command <- c("Parameter* & Estimate	& SE	& 95CI & R2	& Sigma\\\\\n",
+                      paste0("\\hline\n","{\\footnotesize * Calculated as original scores divided by 100}\n"))
+  df$Parameter <- df$Parameter %>% purrr::map_chr(~ifelse(endsWith(.x," model"),paste0("\\textbf{",.x,"}"),.x))
+}else{
+  add_to_row_ls <- NULL
+}
+df %>%
+  ready4show::print_table(output_type_1L_chr = params$output_type_1L_chr,
+                          caption_1L_chr = knitr::opts_current$get("tab.cap"),
+                          mkdn_tbl_ref_1L_chr = paste0("tab:",knitr::opts_current$get("tab.id")),
+                          use_rdocx_1L_lgl = ifelse(params$output_type_1L_chr=="Word",T,F),
+                          add_to_row_ls = add_to_row_ls,
+                          hline_after_ls = c(-1,0),
+                          sanitize_fn = force)
+```
+\blandscape
+<!---BLOCK_LANDSCAPE_START--->
+```{r cpkgs, tab.cap='R Packages used in data analysis and reporting', tab.id = 'cpkgs', echo = F, results = 'asis'}
+df <- data.frame(Package = c("youthvars","TTU","youthu") %>% purrr::map(~
+  utils::packageDescription(.x) %>% purrr::pluck("Imports") %>% strsplit(",\\n") %>% purrr::flatten_chr() %>% purrr::map(~strsplit(.x,", ") %>% purrr::flatten_chr()) %>% purrr::flatten_chr() %>% sort()) %>%
+  purrr::reduce(~c(.x,.y,"youthu")) %>% purrr::map_chr(~{
+   updated_1L_chr <- stringr::str_replace_all(.x,"\\n"," ") 
+   problem_idx_1L_chr <- stringr::str_locate(updated_1L_chr," ")[1,1] %>% unname() #\\(
+   if(!is.na(problem_idx_1L_chr))
+    updated_1L_chr <- updated_1L_chr %>% 
+      stringr::str_sub(end = problem_idx_1L_chr-1)
+    
+   updated_1L_chr %>% trimws(which = "left")
+   }) %>% unique() %>% sort()) 
+df <- df %>% dplyr::mutate(Version = Package %>% purrr::map_chr(~utils::packageDescription(.x) %>% purrr::pluck("Version")),
+                           Citation = Package %>% purrr::map_chr(~get_pkg_citn(.x)))
+if(params$output_type_1L_chr == "Word") {
+  df %>%
+   ready4show::print_table(output_type_1L_chr = params$output_type_1L_chr,
+                          caption_1L_chr = knitr::opts_current$get("tab.cap"),
+                          mkdn_tbl_ref_1L_chr = paste0("tab:",knitr::opts_current$get("tab.id")),
+                          use_rdocx_1L_lgl = ifelse(params$output_type_1L_chr=="Word",T,F),
+                          add_to_row_ls = NULL,
+                          sanitize_fn = NULL)
+} else{
+  df %>%
+         kableExtra::kbl(booktabs = T,
+                         longtable = T,
+                     caption = knitr::opts_current$get("tab.cap")#,escape = F
+                     ) %>%
+  kableExtra::kable_styling() %>%
+    kableExtra::column_spec(3, width = "30em")
+}        
+```
+\elandscape
+<!---BLOCK_LANDSCAPE_STOP--->

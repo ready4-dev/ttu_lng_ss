@@ -1,0 +1,46 @@
+---
+title: "MS_Method"
+author: "Matthew Hamilton"
+date: "13/10/2020"
+output:
+  bookdown::pdf_document2: default
+  html_document: default
+  pdf_document: default
+---
+## Sample and setting
+Add details on sample and setting (including data collection proceedures).
+
+## Measures
+Data was collected on utility weights, `r results_ls$study_descs_ls$predr_ctgs_ls %>% purrr::map_int(~length(.x)) %>% sum() %>% xfun::numbers_to_words()` candidate predictors of utility weights including `r results_ls$study_descs_ls$predr_ctgs_ls %>% names() %>% paste0(collapse = ", ") %>% stringi::stri_replace_last_fixed(","," and")` as well as descriptive population information. 
+
+### Utility weights
+Utility weights were assessed using the `r results_ls$study_descs_ls$health_utl_nm_1L_chr` multi-attribute utility instrument.
+
+### Candidate predictors
+Data from `r results_ls$study_descs_ls$predr_ctgs_ls %>% purrr::map_int(~length(.x)) %>% sum() %>% xfun::numbers_to_words()` measures of `r results_ls$study_descs_ls$predr_ctgs_ls %>% purrr::map2_chr(names(results_ls$study_descs_ls$predr_ctgs_ls),~ paste0(.y," (",length(.x) %>% xfun::numbers_to_words()," measure",ifelse(length(.x)>1,"s",""),")")) %>% paste0(collapse = ", ") %>% stringi::stri_replace_last_fixed(","," and")` were used as candidate predictors to construct TTU models. 
+
+The candidate predictors were the `r results_ls$tables_ls$pred_dist_and_cors$variable_chr %>% unique() %>% purrr::map_chr(~ .x %>% stringi::stri_replace_last_fixed("(","(measured on a scale of ")) %>% paste0(collapse = ", ") %>% stringi::stri_replace_last_fixed(","," and")`
+
+
+### Population characteristics
+Population characteristic data were `r results_ls$tables_ls$participant_descs$variable %>% unique() %>% tolower()  %>% paste0(collapse = ", ") %>% stringi::stri_replace_last_fixed(","," and") `
+
+## Statistical analysis
+We applied a generalised form of the transfer to utility analysis algorithm developed by Hamilton, Gao and colleagues [@HamiltonGao2021]. Basic descriptive statistics were used to characterise the cohort in terms of baseline population variables. Pearson’s Product Moment Correlations (*r*) were used to determine the relationships between candidate predictors and the `r results_ls$study_descs_ls$health_utl_nm_1L_chr` utility score.
+
+### TTU regression models 
+We compared predictive performance of a range of models predicting `r results_ls$study_descs_ls$health_utl_nm_1L_chr` utility scores using the candidate predictor that had the highest Pearson correlation coefficient with utility scores. The models compared include `r ifelse(!"OLS" %in% results_ls$tables_ls$tenf_phq9$Model,"",paste0("OLS regression with ",results_ls$tables_ls$tenf_phq9$Model[(which(results_ls$tables_ls$tenf_phq9$Model=="OLS")+1):(which(results_ls$tables_ls$tenf_phq9$Model=="GLM")-1)] %>% unique() %>% purrr::map_chr(~ .x %>% stringi::stri_replace_last_fixed("(","(measured on a scale of ")) %>% paste0(collapse = ", ") %>% stringi::stri_replace_last_fixed(","," and") %>% tolower()))` `r ifelse(length(intersect(c("OLS","GLM"),results_ls$tables_ls$tenf_phq9$Model))==2," and ","")``r ifelse(!"GLM" %in% results_ls$tables_ls$tenf_phq9$Model,"",paste0("GLM using ",results_ls$tables_ls$tenf_phq9$Model[(which(results_ls$tables_ls$tenf_phq9$Model=="GLM")+1):length(results_ls$tables_ls$tenf_phq9$Model)] %>% unique() %>% purrr::map_chr(~ .x %>% stringi::stri_replace_last_fixed("(","(measured on a scale of ")) %>% paste0(collapse = ", ") %>% stringi::stri_replace_last_fixed(","," and") %>% tolower()))`. Ten-fold cross-validation was used to compare model fitting using training datasets and predictive ability using testing datasets using three indicators including R^2^, root mean square error (RMSE) and mean absolute error (MAE)  [@RN20; @RN19].
+
+To evaluate whether candidate predictors could independently predict utility scores, we established multivariate prediction models using baseline data with the candidate predictor and a range of other risk factors including `r results_ls$candiate_covars_chr %>% paste0(collapse = ", ") %>% stringi::stri_replace_last_fixed(","," and") %>% tolower())` .
+
+### Candidate predictor comparison
+We compared the usefulness of the candidate predictors by using a random forest model including all `r results_ls$study_descs_ls$predr_ctgs_ls %>% purrr::map_int(~length(.x)) %>% sum() %>% xfun::numbers_to_words()` candidate predictors and by evaluating the independent predictive ability of different candidate predictors using 10-fold cross-validation. 
+
+### Longitudinal transfer to utility models
+We next established longitudinal models using generalised linear mixed- effect models (GLMM) and Linear mixed effect model (LMM) that included both the baseline and follow-up data. Model fitting was evaluated using Bayesian R^2^ [@RN21].
+
+`r ifelse(is.null(results_ls$secondary_chr),"","### Secondary analyses")`
+`r ifelse(is.null(results_ls$secondary_chr),"",results_ls$secondary_chr[1])`
+
+### Software
+We undertook all our analyses using  ***R*** `r results_ls$r_version_1L_chr` [@RCitation] using the TTU package [@TTUPackage]. 

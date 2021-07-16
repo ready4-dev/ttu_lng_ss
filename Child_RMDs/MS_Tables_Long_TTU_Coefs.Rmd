@@ -1,0 +1,37 @@
+---
+title: "Untitled"
+author: "Matthew Hamilton"
+date: "27/01/2021"
+output: html_document
+---
+
+\blandscape
+<!---BLOCK_LANDSCAPE_START--->
+
+```{r cfscl, tab.cap='Estimated coefficients from longitudinal TTU models for candidate predictors', tab.id = 'cfscl', results="asis"}
+tb <- results_ls$tables_ls$ind_preds_coefs_tbl
+add_to_row_ls <- list()
+add_to_row_ls$pos <- list(-1, 0, nrow(tb))
+add_to_row_ls$command <- c(paste0("\\toprule \n", "&\\multicolumn{5}{c}{GLMM with Gaussian distribution and log link}&\\multicolumn{5}{c}{LMM with clog-log transformation}\\\\\n"),
+                      paste0("Parameter & Estimate	& SE	& 95CI & R2	& Sigma & Estimate & SE	& 95CI & R2 & Sigma \\\\\n",
+                             "\\midrule \n"),
+                                    paste("\\bottomrule \n"  
+                                          ))
+if(params$output_type_1L_chr =="Word"){
+  tb$Parameter <- stringr::str_replace_all(stringr::str_replace_all(stringr::str_replace_all(tb$Parameter,'\\\\textbf',''),'\\{',''),'\\}','')
+}
+if(params$output_type_1L_chr == "PDF"){
+  tb$Parameter <- tb$Parameter %>% purrr::map_chr(~ifelse(endsWith(.x," model"),paste0("\\textbf{",.x,"}"),.x))
+}
+tb %>%
+  ready4show::print_table(output_type_1L_chr = params$output_type_1L_chr,
+                          caption_1L_chr = knitr::opts_current$get("tab.cap"),
+                          mkdn_tbl_ref_1L_chr = paste0("tab:",knitr::opts_current$get("tab.id")),
+                          use_rdocx_1L_lgl = ifelse(params$output_type_1L_chr=="Word",T,F),
+                          add_to_row_ls = add_to_row_ls,
+                          sanitize_fn = force)
+
+```
+
+\elandscape
+<!---BLOCK_LANDSCAPE_STOP--->

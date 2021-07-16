@@ -1,0 +1,8 @@
+---
+title: "MS_Intro_Long"
+author: "Matthew Hamilton"
+date: "13/10/2020"
+output: html_document
+---
+
+This is a scientific summary automatically generated from results produced by the R package TTU [@TTUPackage].

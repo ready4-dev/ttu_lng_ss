@@ -1,0 +1,30 @@
+---
+title: "Longitudinal TTU"
+author: "Matthew Hamilton"
+date: "26/01/2021"
+output: html_document
+---
+
+## Longitudinal TTU regression models
+
+<!-- Table start -->Regression coefficients of the baseline score and score changes (from baseline to follow-up) estimated in individual `r results_ls$ttu_lngl_ls$best_mdls_tb$model_type %>% paste0(collapse = ", ") %>% stringi::stri_replace_last(fixed = ",", " and")` models are summarised in `r ifelse(params$output_type_1L_chr=="Word","","Table")` \@ref(tab:cfscl).<!-- Table end --> Bayesian R^2^ from each model is reported. Modelled residual standard deviations (SDs) were also provided to support simulation studies which need to capture individual level variation. In `r ifelse(length(results_ls$ttu_lngl_ls$best_mdls_tb$name_chr %>% unique())>1,"",ifelse(nrow(results_ls$ttu_lngl_ls$best_mdls_tb)==2,"both","all"))` `r results_ls$ttu_lngl_ls$best_mdls_tb$model_type %>% paste0(collapse = ", ") %>% stringi::stri_replace_last(fixed = ",", " and")` models, the prediction models using `r ifelse(length(results_ls$ttu_lngl_ls$best_mdls_tb$name_chr %>% unique())==1,results_ls$ttu_lngl_ls$best_mdls_tb$name_chr %>% unique(),results_ls$ttu_lngl_ls$best_mdls_tb$name_chr %>% paste0(collapse = ", ") %>% stringi::stri_replace_last(fixed = ",", " and") %>% paste0(" respectively"))` had the highest R^2^ (`r results_ls$ttu_lngl_ls$best_mdls_tb$r2_dbl %>% stringr::str_squish() %>% paste0(collapse = ", ") %>% stringi::stri_replace_last(fixed = ",", " and")`) <!-- Author judgment start -->and lowest estimated residual SD. R^2^ were above `r results_ls$tables_ls$ind_preds_coefs_tbl %>% dplyr::filter(!is.na(R2_OLS_CLL)) %>% dplyr::pull(R2_OLS_CLL) %>% as.numeric() %>% min() %>% round(1)` for all `r results_ls$ttu_lngl_ls$best_mdls_tb$model_type[2]` models and above 0.6 for all `r results_ls$ttu_lngl_ls$best_mdls_tb$model_type[1]` `r ifelse(nrow(results_ls$tables_ls$ind_preds_coefs_tbl %>% dplyr::filter(as.numeric(R2_GLM_GSN_LOG)<0.6))>0,"models except for the ","")``r results_ls$tables_ls$ind_preds_coefs_tbl %>% dplyr::filter(as.numeric(R2_GLM_GSN_LOG)<0.6) %>% dplyr::pull(Parameter) %>% stringr::str_remove_all(" model") %>% paste0(collapse = "and ")` model`r ifelse(length(results_ls$tables_ls$ind_preds_coefs_tbl %>% dplyr::filter(as.numeric(R2_GLM_GSN_LOG)<0.6) %>% dplyr::pull(Parameter)) ==1,'','s')`. Variance of the random intercept was comparable with the residual variance. <!-- Author judgment end --> 
+
+`r if(is.null(child_docs_ls$Long_TTU_Coefs)){"(Insert \\@ref(tab:cfscl) about here)"}`
+```{r, child = child_docs_ls$Long_TTU_Coefs, echo=FALSE}
+```
+
+The mean ratio between two coefficients (${\beta}_{change}/{\beta}_{baseline}$) is `r results_ls$ttu_lngl_ls$cs_ts_ratios_tb %>% purrr::pmap_chr(~paste0(..2, " for ", ..1)) %>% paste0(collapse = ", ") %>% stringi::stri_replace_last(fixed = ",", " and")`. 
+
+<!-- Figure start -->Distribution of observed and predicted utility scores and their association from `r results_ls$ttu_lngl_ls$best_mdls_tb %>% purrr::pmap_chr(~paste0(..1," (",..2,")"))  %>% paste0(collapse = ", ") %>% stringi::stri_replace_last(fixed = ",", " and")` using `r results_ls$predr_var_nms_chr %>% paste0(collapse = ", ") %>% stringi::stri_replace_last(fixed = ",", " and")` are plotted in Figure \@ref(fig:fig2)<!-- Figure end -->. <!-- Author judgment start -->
+
+We also evaluated models with `r results_ls$ttu_lngl_ls$incld_covars_chr %>% paste0(collapse = ", ") %>% stringi::stri_replace_last(fixed = ",", " and") %>% paste0(" at baseline")` and `r results_ls$ttu_lngl_ls$incld_covars_chr %>% paste0(collapse = ", ") %>% stringi::stri_replace_last(fixed = ",", " and") %>% paste0(" change from baseline")` added to `r names(results_ls$study_descs_ls$predr_ctgs_ls) %>% tolower() %>% paste0(collapse = ", ") %>% stringi::stri_replace_last(fixed = ",", " and")` predictors <!-- Table start -->(see `r ifelse(params$output_type_1L_chr=="Word","","Tables")` \@ref(tab:coefslongtb) and \@ref(tab:coefsglmtb))<!-- Table end -->. 
+
+<!-- Author judgment start --> `r ifelse(is.null(results_ls$secondary_chr),"",results_ls$secondary_chr[2])` 
+Detailed summaries of all models are available in the online data repository (see "Availability of data and materials").
+<!-- Author judgment end --> 
+
+<!-- Author judgment end -->
+
+`r if(is.null(child_figs_ls$fig2)){"(Insert Figure \\@ref(fig:fig2) about here)"}`
+```{r, child = child_figs_ls$fig2, echo=FALSE}
+```

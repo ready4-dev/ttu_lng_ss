@@ -1,0 +1,6 @@
+---
+title: "MS_Aims"
+output: html_document
+---
+
+We aimed to identify the best TTU regression models to predict `r results_ls$study_descs_ls$health_utl_nm_1L_chr` utility and evaluate the predictive ability of `r results_ls$study_descs_ls$predr_ctgs_ls %>% purrr::map_int(~length(.x)) %>% sum() %>% xfun::numbers_to_words()` candidate measures of `r results_ls$study_descs_ls$predr_ctgs_ls %>% names() %>% paste0(collapse = ", ") %>% stringi::stri_replace_last_fixed(","," and")`.
