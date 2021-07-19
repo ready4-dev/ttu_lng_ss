@@ -8,7 +8,7 @@ output:
   pdf_document: default
 ---
 ## Sample and setting
-Add details on sample and setting (including data collection proceedures).
+<!-- Add details on sample and setting (including data collection proceedures). -->
 
 ## Measures
 Data was collected on utility weights, `r results_ls$study_descs_ls$predr_ctgs_ls %>% purrr::map_int(~length(.x)) %>% sum() %>% xfun::numbers_to_words()` candidate predictors of utility weights including `r results_ls$study_descs_ls$predr_ctgs_ls %>% names() %>% paste0(collapse = ", ") %>% stringi::stri_replace_last_fixed(","," and")` as well as descriptive population information. 
@@ -31,7 +31,7 @@ We applied a generalised form of the transfer to utility analysis algorithm deve
 ### TTU regression models 
 We compared predictive performance of a range of models predicting `r results_ls$study_descs_ls$health_utl_nm_1L_chr` utility scores using the candidate predictor that had the highest Pearson correlation coefficient with utility scores. The models compared include `r ifelse(!"OLS" %in% results_ls$tables_ls$tenf_phq9$Model,"",paste0("OLS regression with ",results_ls$tables_ls$tenf_phq9$Model[(which(results_ls$tables_ls$tenf_phq9$Model=="OLS")+1):(which(results_ls$tables_ls$tenf_phq9$Model=="GLM")-1)] %>% unique() %>% purrr::map_chr(~ .x %>% stringi::stri_replace_last_fixed("(","(measured on a scale of ")) %>% paste0(collapse = ", ") %>% stringi::stri_replace_last_fixed(","," and") %>% tolower()))` `r ifelse(length(intersect(c("OLS","GLM"),results_ls$tables_ls$tenf_phq9$Model))==2," and ","")``r ifelse(!"GLM" %in% results_ls$tables_ls$tenf_phq9$Model,"",paste0("GLM using ",results_ls$tables_ls$tenf_phq9$Model[(which(results_ls$tables_ls$tenf_phq9$Model=="GLM")+1):length(results_ls$tables_ls$tenf_phq9$Model)] %>% unique() %>% purrr::map_chr(~ .x %>% stringi::stri_replace_last_fixed("(","(measured on a scale of ")) %>% paste0(collapse = ", ") %>% stringi::stri_replace_last_fixed(","," and") %>% tolower()))`. Ten-fold cross-validation was used to compare model fitting using training datasets and predictive ability using testing datasets using three indicators including R^2^, root mean square error (RMSE) and mean absolute error (MAE)  [@RN20; @RN19].
 
-To evaluate whether candidate predictors could independently predict utility scores, we established multivariate prediction models using baseline data with the candidate predictor and a range of other risk factors including `r results_ls$candiate_covars_chr %>% paste0(collapse = ", ") %>% stringi::stri_replace_last_fixed(","," and") %>% tolower())` .
+To evaluate whether candidate predictors could independently predict utility scores, we established multivariate prediction models using baseline data with the candidate predictor and a range of other risk factors including `r results_ls$candiate_covars_chr %>% paste0(collapse = ", ") %>% stringi::stri_replace_last_fixed(","," and") %>% tolower()` .
 
 ### Candidate predictor comparison
 We compared the usefulness of the candidate predictors by using a random forest model including all `r results_ls$study_descs_ls$predr_ctgs_ls %>% purrr::map_int(~length(.x)) %>% sum() %>% xfun::numbers_to_words()` candidate predictors and by evaluating the independent predictive ability of different candidate predictors using 10-fold cross-validation. 

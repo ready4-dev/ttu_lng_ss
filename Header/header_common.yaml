@@ -1,13 +1,13 @@
-title: Title of manuscript
+title: A transfer to utility study using the R package TTU
 author:
   - Alejandra Scienceace:
       email: fake@email.com
       institute: [AwesomeUni]
       correspondence: true
-  - name: Fion Researchchamp
+  - name: Fionn Researchchamp
     email: notareal@email.com
     institute: [AugustInstitute]
 institute:
   - AwesomeUni: Awesome University, Somewhere, Earth
   - AugustInstitute: August Institute, Elsewhere, Earth
-keywords:  add, all, relevant, keywords, here
+keywords:  some, relevant, keywords

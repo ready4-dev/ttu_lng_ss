@@ -5,4 +5,4 @@ date: "13/10/2020"
 output: html_document
 ---
 
-This is a scientific summary automatically generated from results produced by the R package TTU [@TTUPackage].
+This article is an automatically generated scientific summary of a study that the authors implemented using the R package TTU [@TTUPackage].
