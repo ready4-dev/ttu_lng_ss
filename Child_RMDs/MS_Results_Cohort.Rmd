@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ## Cohort characteristics
-<!-- Table start -->Participants characteristics at baseline and follow-up are displayed in `r ifelse(params$output_type_1L_chr=="Word","","Table")` \@ref(tab:participantstb).<!-- Table end --> This study included `r results_ls$cohort_ls$n_inc_1L_dbl` out of the `r results_ls$cohort_ls$n_all_1l_dbl` participants with complete `r results_ls$study_descs_ls$health_utl_nm_1L_chr` data. This cohort predominantly comprised individuals with `r results_ls$cohort_ls[[5]][[1]]$name_1L_chr` (`r (results_ls$cohort_ls[[5]][[1]]$n_in_group_1L_dbl/(results_ls$cohort_ls$n_inc_1L_dbl - results_ls$cohort_ls[[5]][[1]]$n_msng_1L_dbl)*100) %>% round(1)`%) at `r results_ls$cohort_ls[[6]][[1]]$name_1L_chr` (`r (results_ls$cohort_ls[[6]][[1]]$n_in_group_1L_dbl/(results_ls$cohort_ls$n_inc_1L_dbl - results_ls$cohort_ls[[6]][[1]]$n_msng_1L_dbl)*100) %>% round(1)`%). Participant ages ranged between `r results_ls$cohort_ls$numeric_vars_smry_ls$Age$bl_min_1L_dbl`-`r results_ls$cohort_ls$numeric_vars_smry_ls$Age$bl_max_1L_dbl` with a mean age of `r results_ls$cohort_ls$numeric_vars_smry_ls$Age$bl_mean_1L_dbl` (SD = `r results_ls$cohort_ls$numeric_vars_smry_ls$Age$bl_sd_1L_dbl`).
+<!-- Table start -->Participants characteristics at baseline and follow-up are displayed in `r ifelse(params$output_type_1L_chr=="Word","","Table")` \@ref(tab:participantstb).<!-- Table end --> This study included `r results_ls$cohort_ls$n_inc_1L_dbl` out of the `r results_ls$cohort_ls$n_all_1l_dbl` participants with complete `r results_ls$study_descs_ls$health_utl_nm_1L_chr` data. 
 
 <!-- `r if(is.null(child_docs_ls$Cohort_Profile)){"(Insert \\@ref(tab:participantstb) about here)"}` -->
 ```{r, child = child_docs_ls$Cohort_Profile, echo=FALSE}

@@ -6,8 +6,184 @@ output: html_document
 ---
 ```{r echo = F}
 library(officedown)
-library(magrittr)
+library(TTU)
 ```
+
+```{r}
+####
+get_predrs_by_ctg <-  function(results_ls,
+                               long_desc_1L_lgl = F){
+  predrs_by_ctg_ls <- results_ls$study_descs_ls$predr_ctgs_ls[names(results_ls$study_descs_ls$predr_ctgs_ls) %>% 
+                                                                    tolower() %>% 
+                                                                    purrr::map_lgl(~.x %in% get_predr_ctgs(results_ls, 
+                                                                                                           collapse_1L_lgl = F))] %>% 
+    purrr::map(  ~ .x[.x %in% results_ls$candidate_predrs_chr]) %>%
+    stats::setNames(get_predr_ctgs(results_ls, 
+                                   collapse_1L_lgl = F))
+  if(long_desc_1L_lgl){
+    predrs_by_ctg_ls <- predrs_by_ctg_ls %>%
+      purrr::map2(names(predrs_by_ctg_ls) %>% Hmisc::capitalize(),
+                  ~{
+        predr_descs_1L_chr <- .x %>% purrr::map_chr(~         paste0(ready4fun::get_from_lup_obj(results_ls$mdl_ingredients_ls$dictionary_tb,
+                                           match_value_xx = .x,
+                                           match_var_nm_1L_chr = "var_nm_chr",
+                                           target_var_nm_1L_chr = "var_desc_chr",
+                                           evaluate_lgl = F),
+               " (measured on a scale of ",
+               ready4fun::get_from_lup_obj(results_ls$mdl_ingredients_ls$predictors_lup,
+                                           match_value_xx = .x,
+                                           match_var_nm_1L_chr = "short_name_chr",
+                                           target_var_nm_1L_chr = "min_val_dbl",
+                                           evaluate_lgl = F),
+               "-",
+               ready4fun::get_from_lup_obj(results_ls$mdl_ingredients_ls$predictors_lup,
+                                           match_value_xx = .x,
+                                           match_var_nm_1L_chr = "short_name_chr",
+                                           target_var_nm_1L_chr = "max_val_dbl",
+                                           evaluate_lgl = F),
+               ")")
+                                ) %>% paste0(collapse = ", ") %>% 
+          stringi::stri_replace_last_fixed(","," and")
+        paste0(.y," was measured by ", predr_descs_1L_chr,".")
+
+      })
+  }
+  return(predrs_by_ctg_ls)
+}
+get_predr_ctgs <- function(results_ls,
+                           collapse_1L_lgl = T){
+  predr_ctgs_chr <- (results_ls$study_descs_ls$predr_ctgs_ls %>% names())[(results_ls$study_descs_ls$predr_ctgs_ls %>% purrr::map_int(~length(.x[.x %in% results_ls$candidate_predrs_chr]))) > 0] %>% tolower() 
+  if(collapse_1L_lgl){
+     predr_ctgs_chr <- predr_ctgs_chr %>% paste0(collapse = ", ") %>% stringi::stri_replace_last_fixed(","," and")
+  }
+
+  return(predr_ctgs_chr)
+}
+
+
+####
+
+
+get_mdl_cmprsns <- function(results_ls,
+                            describe_1L_lgl = T){
+  mdl_cmprsns_1L_chr <- paste0(
+  ifelse(!"OLS" %in% 
+           results_ls$tables_ls$tenf_phq9$Model,
+         "",
+         ifelse(describe_1L_lgl,
+                paste0("OLS regression models used ", results_ls$tables_ls$tenf_phq9$Model[(which(results_ls$tables_ls$tenf_phq9$Model=="OLS")+1):(which(results_ls$tables_ls$tenf_phq9$Model=="GLM")-1)] %>% unique() %>% purrr::map_chr(~ .x %>% stringi::stri_replace_last_fixed("(","(measured on a scale of ")) %>% paste0(collapse = ", ") %>% stringi::stri_replace_last_fixed(","," and") %>% tolower(),"."),
+                "Ordinary Least Squares (OLS) regression models")
+         
+         ),
+  ifelse(!describe_1L_lgl & length(intersect(c("OLS","GLM"),
+                          results_ls$tables_ls$tenf_phq9$Model))==2," and ",ifelse(describe_1L_lgl," ","")),
+  ifelse(!"GLM" %in% 
+           results_ls$tables_ls$tenf_phq9$Model,
+         "",
+         ifelse(describe_1L_lgl,
+                paste0("GLMs used ",
+                results_ls$tables_ls$tenf_phq9$Model[(which(results_ls$tables_ls$tenf_phq9$Model=="GLM")+1):length(results_ls$tables_ls$tenf_phq9$Model)] %>% 
+                  unique() %>% 
+                  purrr::map_chr(~ .x %>% 
+                                   stringi::stri_replace_last_fixed("(","(measured on a scale of ")) %>% paste0(collapse = ", ") %>% stringi::stri_replace_last_fixed(","," and") %>% tolower()),
+                "Generalised Linear Models (GLMs)")
+         ))
+  return(mdl_cmprsns_1L_chr)
+}
+get_hlth_utl_nm <- function(results_ls,
+                            short_nm_1L_lgl = T){
+  health_utl_nm_1L_chr <- ifelse(short_nm_1L_lgl,
+                                 results_ls$study_descs_ls$health_utl_nm_1L_chr,
+                                 results_ls$study_descs_ls$health_utl_long_nm_1L_chr)
+  return(health_utl_nm_1L_chr)
+}
+get_nbr_of_predrs <- function(results_ls,
+                              as_words_1L_lgl = T){
+  nbr_of_predrs_xx <- results_ls$study_descs_ls$predr_ctgs_ls %>% purrr::map_int(~length(.x[.x %in% results_ls$candidate_predrs_chr])) %>% sum() 
+  if(as_words_1L_lgl)
+  nbr_of_predrs_xx <- nbr_of_predrs_xx %>% xfun::numbers_to_words()
+  return(nbr_of_predrs_xx)
+}
+get_popl_descvs <- function(results_ls){
+ popl_descvs_1L_chr <- results_ls$tables_ls$participant_descs$variable %>% unique() %>% tolower()  %>% paste0(collapse = ", ") %>% stringi::stri_replace_last_fixed(","," and")
+ return(popl_descvs_1L_chr)
+}
+get_predrs_by_ctg <-  function(results_ls,
+                               long_desc_1L_lgl = F){
+  predrs_by_ctg_ls <- results_ls$study_descs_ls$predr_ctgs_ls[names(results_ls$study_descs_ls$predr_ctgs_ls) %>% 
+                                                                    tolower() %>% 
+                                                                    purrr::map_lgl(~.x %in% get_predr_ctgs(results_ls, 
+                                                                                                           collapse_1L_lgl = F))] %>% 
+    purrr::map(  ~ .x[.x %in% results_ls$candidate_predrs_chr]) %>%
+    stats::setNames(get_predr_ctgs(results_ls, 
+                                   collapse_1L_lgl = F))
+  if(long_desc_1L_lgl){
+    predrs_by_ctg_ls <- predrs_by_ctg_ls %>%
+      purrr::map2(names(predrs_by_ctg_ls) %>% Hmisc::capitalize(),
+                  ~{
+        predr_descs_1L_chr <- .x %>% purrr::map_chr(~         paste0(ready4fun::get_from_lup_obj(results_ls$mdl_ingredients_ls$dictionary_tb,
+                                           match_value_xx = .x,
+                                           match_var_nm_1L_chr = "var_nm_chr",
+                                           target_var_nm_1L_chr = "var_desc_chr",
+                                           evaluate_lgl = F),
+               " (measured on a scale of ",
+               ready4fun::get_from_lup_obj(results_ls$mdl_ingredients_ls$predictors_lup,
+                                           match_value_xx = .x,
+                                           match_var_nm_1L_chr = "short_name_chr",
+                                           target_var_nm_1L_chr = "min_val_dbl",
+                                           evaluate_lgl = F),
+               "-",
+               ready4fun::get_from_lup_obj(results_ls$mdl_ingredients_ls$predictors_lup,
+                                           match_value_xx = .x,
+                                           match_var_nm_1L_chr = "short_name_chr",
+                                           target_var_nm_1L_chr = "max_val_dbl",
+                                           evaluate_lgl = F),
+               ")")
+                                ) %>% paste0(collapse = ", ") %>% 
+          stringi::stri_replace_last_fixed(","," and")
+        paste0(.y," was measured by ", predr_descs_1L_chr,".")
+
+      })
+  }
+  return(predrs_by_ctg_ls)
+}
+get_nbr_of_predrs_by_ctg <- function(results_ls){
+  multiple_1L_lgl <- length(get_predr_ctgs(results_ls,
+                                           collapse_1L_lgl = F)>1)
+  predrs_by_ctg_1L_chr <- results_ls$study_descs_ls$predr_ctgs_ls[names(results_ls$study_descs_ls$predr_ctgs_ls) %>% 
+                                                                    tolower() %>% 
+                                                                    purrr::map_lgl(~.x %in% get_predr_ctgs(results_ls, 
+                                                                                                           collapse_1L_lgl = F))] %>% 
+    purrr::map2_chr(get_predr_ctgs(results_ls, 
+                                   collapse_1L_lgl = F), 
+                    ~ paste0(.y,
+                             ifelse(multiple_1L_lgl,
+                                    paste0(" (",
+                                           length(.x[.x %in% results_ls$candidate_predrs_chr]) %>% 
+                                             xfun::numbers_to_words(),
+                                           " measure",
+                                           ifelse(length(.x[.x %in%
+                                                              results_ls$candidate_predrs_chr])>1,
+                                                  "s",
+                                                  ""),
+                                           ")"), 
+                                    ""))) %>% 
+    paste0(collapse = ", ") %>% 
+    stringi::stri_replace_last_fixed(","," and") %>% 
+    tolower()
+  return(predrs_by_ctg_1L_chr )
+}
+get_predr_ctgs <- function(results_ls,
+                           collapse_1L_lgl = T){
+  predr_ctgs_chr <- (results_ls$study_descs_ls$predr_ctgs_ls %>% names())[(results_ls$study_descs_ls$predr_ctgs_ls %>% purrr::map_int(~length(.x[.x %in% results_ls$candidate_predrs_chr]))) > 0] %>% tolower() 
+  if(collapse_1L_lgl){
+     predr_ctgs_chr <- predr_ctgs_chr %>% paste0(collapse = ", ") %>% stringi::stri_replace_last_fixed(","," and")
+  }
+
+  return(predr_ctgs_chr)
+}
+```
+
 
 ```{r results = 'asis'}
 # Adapted from: https://stackoverflow.com/questions/15036754/r-package-xtable-how-to-create-a-latextable-with-multiple-rows-and-columns-from
@@ -43,33 +219,33 @@ make_bl_fup_add_to_row_ls <-  function(df,
 ```
 
 ```{r}
-print_table_xx <- function(data_tb,
-                           pdf_output_lgl,
-                           caption_chr,
-                           label,
-                           hline.after,
-                           sanitize.text.function = getOption("xtable.sanitize.text.function", NULL),
-                           addtorow){
-   data_x_tb <- data_tb %>%
-  xtable::xtable(caption = caption_chr, label = label)
-if(pdf_output_lgl){
- data_x_tb %>%
-  print(comment = F,
-        floating = TRUE, #floating.environment = "sidewaystable",
-        hline.after = hline.after,
-        caption.placement = "top",
-        sanitize.text.function = sanitize.text.function,
-        add.to.row = addtorow, 
-        include.colnames = FALSE,
-        include.rownames=FALSE#,scalebox = 0.75
-        ) 
-}else{
-  data_tb %>%
-    kableExtra::kable(escape = F,
-        caption = caption_chr) %>%
-      kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed"), 
-                                full_width = F, 
-                                position = "left")
-}
-}
+# print_table_xx <- function(data_tb,
+#                            pdf_output_lgl,
+#                            caption_chr,
+#                            label,
+#                            hline.after,
+#                            sanitize.text.function = getOption("xtable.sanitize.text.function", NULL),
+#                            addtorow){
+#    data_x_tb <- data_tb %>%
+#   xtable::xtable(caption = caption_chr, label = label)
+# if(pdf_output_lgl){
+#  data_x_tb %>%
+#   print(comment = F,
+#         floating = TRUE, #floating.environment = "sidewaystable",
+#         hline.after = hline.after,
+#         caption.placement = "top",
+#         sanitize.text.function = sanitize.text.function,
+#         add.to.row = addtorow, 
+#         include.colnames = FALSE,
+#         include.rownames=FALSE#,scalebox = 0.75
+#         ) 
+# }else{
+#   data_tb %>%
+#     kableExtra::kable(escape = F,
+#         caption = caption_chr) %>%
+#       kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed"), 
+#                                 full_width = F, 
+#                                 position = "left")
+# }
+# }
 ```
