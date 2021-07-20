@@ -30,16 +30,16 @@ We applied a generalised form of the transfer to utility analysis algorithm deve
 ### TTU regression models 
 We compared predictive performance of a range of models predicting `r get_hlth_utl_nm(results_ls)` utility scores using the candidate predictor that had the highest Pearson correlation coefficient with utility scores. The models compared include `r get_mdl_cmprsns(results_ls, describe_1L_lgl = F)`. `r get_mdl_cmprsns(results_ls)`. Ten-fold cross-validation was used to compare model fitting using training datasets and predictive ability using testing datasets using three indicators including R^2^, root mean square error (RMSE) and mean absolute error (MAE)  [@RN20; @RN19].
 
-To evaluate whether candidate predictors could independently predict utility scores, we established multivariate prediction models using baseline data with the candidate predictor and a range of other risk factors including `r results_ls$candiate_covars_chr %>% paste0(collapse = ", ") %>% stringi::stri_replace_last_fixed(","," and") %>% tolower()` .
+To evaluate whether candidate predictors could independently predict utility scores, we established multivariate prediction models using baseline data with the candidate predictor and `r get_covar_ctgs(results_ls)` covariates. `r get_covars_by_ctg(results_ls, collapse_1L_lgl = T) %>% paste0(collapse = " ")`
 
-### Candidate predictor comparison
-We compared the usefulness of the candidate predictors by using a random forest model including all `r results_ls$study_descs_ls$predr_ctgs_ls %>% purrr::map_int(~length(.x)) %>% sum() %>% xfun::numbers_to_words()` candidate predictors and by evaluating the independent predictive ability of different candidate predictors using 10-fold cross-validation. 
+`r ifelse(get_nbr_of_predrs(results_ls, as_words_1L_lgl = F)>1,"### Candidate predictor comparison","")`
+`r ifelse(get_nbr_of_predrs(results_ls, as_words_1L_lgl = F)>1,paste0("We compared the usefulness of the candidate predictors by using a random forest model including ",ifelse(get_nbr_of_predrs(results_ls, as_words_1L_lgl = F)>2, paste0("all ",get_nbr_of_predrs(results_ls)),"both")," candidate predictors and by evaluating the independent predictive ability of different candidate predictors using 10-fold cross-validation."),"")`
 
 ### Longitudinal transfer to utility models
-We next established longitudinal models using generalised linear mixed- effect models (GLMM) and Linear mixed effect model (LMM) that included both the baseline and follow-up data. Model fitting was evaluated using Bayesian R^2^ [@RN21].
+We next established longitudinal models using `r get_mdl_cmprsns(results_ls, describe_1L_lgl = F, mixed_1L_lgl = T)` that included both the baseline and follow-up data. Model fitting was evaluated using Bayesian R^2^ [@RN21].
 
-`r ifelse(is.null(results_ls$secondary_chr),"","### Secondary analyses")`
-`r ifelse(is.null(results_ls$secondary_chr),"",results_ls$secondary_chr[1])`
+`r ifelse(get_nbr_of_scndry_analyses(results_ls, as_words_1L_lgl = F) == 0,"","### Secondary analyses")`
+`r ifelse(get_nbr_of_scndry_analyses(results_ls, as_words_1L_lgl = F) == 0,"",paste0(get_nbr_of_scndry_analyses(results_ls) ," secondary analys",ifelse(get_nbr_of_scndry_analyses(results_ls, as_words_1L_lgl = F) == 1,"is was ","es were "), "undertaken. ", get_scndry_anlys_descs(results_ls)))`
 
 ### Software
 We undertook all our analyses using  ***R*** `r results_ls$r_version_1L_chr` [@RCitation] using the TTU package [@TTUPackage]. 
