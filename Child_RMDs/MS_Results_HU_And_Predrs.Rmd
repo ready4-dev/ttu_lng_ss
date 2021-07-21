@@ -5,12 +5,10 @@ date: "26/01/2021"
 output: html_document
 ---
 
-## `r results_ls$study_descs_ls$health_utl_nm_1L_chr` and candidate predictors
-<!-- Figure start -->Distribution of `r results_ls$study_descs_ls$health_utl_nm_1L_chr` total utility score and sub-domain scores are displayed in Figure \@ref(fig:fig1)<!-- Figure end -->, the mean utility score at baseline is `r results_ls$hlth_utl_and_predrs_ls$bl_hu_mean_1L_dbl` (SD = `r results_ls$hlth_utl_and_predrs_ls$bl_hu_sd_1L_dbl`) and `r results_ls$hlth_utl_and_predrs_ls$fup_hu_mean_1L_dbl` (SD = `r results_ls$hlth_utl_and_predrs_ls$fup_hu_sd_1L_dbl`) at follow-up. <!-- Table start -->Distribution of candidate predictors,  `r results_ls$hlth_utl_and_predrs_ls$predrs_nartv_seq_chr %>% paste0(collapse = ", ") %>% stringi::stri_replace_last(fixed = ",", " and")`, are summarised in `r ifelse(params$output_type_1L_chr=="Word","","Table")` \@ref(tab:predrscors)<!-- Table end -->. `r results_ls$hlth_utl_and_predrs_ls$cor_seq_dscdng_chr[1]` was found to have the highest correlation with utility score both at baseline and follow-up followed by `r results_ls$hlth_utl_and_predrs_ls$cor_seq_dscdng_chr[2]``r ifelse(length(results_ls$hlth_utl_and_predrs_ls$cor_seq_dscdng_chr)<3,"",paste0(" and ", results_ls$hlth_utl_and_predrs_ls$cor_seq_dscdng_chr[3]))``r ifelse(length(results_ls$hlth_utl_and_predrs_ls$cor_seq_dscdng_chr)<4,"",paste0("; baseline and follow-up ",results_ls$hlth_utl_and_predrs_ls$cor_seq_dscdng_chr[length(results_ls$hlth_utl_and_predrs_ls$cor_seq_dscdng_chr)]," was found to have the lowest correlation coefficients with utility score"))`. 
+## `r get_hlth_utl_nm(results_ls)` and candidate predictors
+<!-- Figure start -->Distribution of `r get_hlth_utl_nm(results_ls)` total utility score and sub-domain scores are displayed in Figure \@ref(fig:fig1)<!-- Figure end -->. The mean utility score at baseline is `r get_hlth_utl_stat(results_ls, stat_1L_chr = "bl_mean")` (SD = `r get_hlth_utl_stat(results_ls, stat_1L_chr = "bl_sd")`) and is `r get_hlth_utl_stat(results_ls, stat_1L_chr = "fup_mean")` (SD = `r get_hlth_utl_stat(results_ls, stat_1L_chr = "fup_sd")`) at follow-up. <!-- Table start -->Distribution of candidate predictor`r ifelse(get_nbr_of_predrs(results_ls, as_words_1L_lgl = F)>1,"s","")`,  `r get_predrs_by_ctg(results_ls, transform_1L_lgl = T, collapse_1L_lgl = T)`, are summarised in `r ifelse(params$output_type_1L_chr=="Word","","Table")` \@ref(tab:predrscors)<!-- Table end -->. `r make_correlation_text(results_ls)` 
 
-<!-- `r if(is.null(child_docs_ls$Predrs_Cors)){"(Insert \\@ref(tab:predrscors) about here)"}` -->
 ```{r, child = child_docs_ls$Predrs_Cors, echo=FALSE}
 ```
-<!-- `r if(is.null(child_figs_ls$fig1)){"(Insert Figure \\@ref(fig:fig1) about here)"}` -->
 ```{r, child = child_figs_ls$fig1, echo=FALSE}
 ```

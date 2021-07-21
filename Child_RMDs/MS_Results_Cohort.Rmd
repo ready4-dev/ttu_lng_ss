@@ -6,10 +6,10 @@ output: html_document
 ---
 
 ## Cohort characteristics
-<!-- Table start -->Participants characteristics at baseline and follow-up are displayed in `r ifelse(params$output_type_1L_chr=="Word","","Table")` \@ref(tab:participantstb).<!-- Table end --> This study included `r results_ls$cohort_ls$n_inc_1L_dbl` out of the `r results_ls$cohort_ls$n_all_1l_dbl` participants with complete `r results_ls$study_descs_ls$health_utl_nm_1L_chr` data. 
+<!-- Table start -->Participants characteristics at baseline and follow-up are displayed in `r ifelse(params$output_type_1L_chr=="Word","","Table")` \@ref(tab:participantstb).<!-- Table end --> This study included `r make_nbr_included_text(results_ls)`. 
 
 <!-- `r if(is.null(child_docs_ls$Cohort_Profile)){"(Insert \\@ref(tab:participantstb) about here)"}` -->
 ```{r, child = child_docs_ls$Cohort_Profile, echo=FALSE}
 ```
 
-There were `r results_ls$cohort_ls$n_fup_1L_dbl` participants (`r (results_ls$cohort_ls$n_fup_1L_dbl / results_ls$cohort_ls$n_inc_1L_dbl * 100) %>% round(1)`%) who completed `r results_ls$study_descs_ls$health_utl_nm_1L_chr` questions at the follow-up survey `r results_ls$study_descs_ls$time_btwn_bl_and_fup_1L_chr` after baseline assessment. 
+`r make_nbr_at_fup_text(results_ls)`

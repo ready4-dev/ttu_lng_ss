@@ -8,7 +8,7 @@ output: html_document
 \blandscape
 <!---BLOCK_LANDSCAPE_START--->
 
-```{r cfscl, tab.cap='Estimated coefficients from longitudinal TTU models for candidate predictors', tab.id = 'cfscl', results="asis"}
+```{r cfscl, tab.cap='Estimated coefficients from longitudinal TTU models', tab.id = 'cfscl', results="asis"}
 tb <- results_ls$tables_ls$ind_preds_coefs_tbl
 add_to_row_ls <- list()
 add_to_row_ls$pos <- list(-1, 0, nrow(tb))

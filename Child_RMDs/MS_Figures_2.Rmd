@@ -7,6 +7,6 @@ output:
   html_document: default
 ---
 
-```{r fig2, fig.cap=paste0("Comparison of observed and predicted ", results_ls$study_descs_ls$health_utl_nm_1L_chr," utility score from longitudinal TTU model using ", results_ls$predr_var_nms_chr %>% paste0(collapse = ", ") %>% stringi::stri_replace_last(fixed = ",", " and")," (A) Density plots of observed and predicted utility scores (", results_ls$ttu_lngl_ls$best_mdls_tb %>% purrr::pmap_chr(~paste0(..1," (",..2,")")) %>% purrr::pluck(1),") (B) Scatter plots of observed and predicted utility scores by timepoint (", results_ls$ttu_lngl_ls$best_mdls_tb %>% purrr::pmap_chr(~paste0(..1," (",..2,")")) %>% purrr::pluck(1),") (C) Density plots of observed and predicted utility scores (", results_ls$ttu_lngl_ls$best_mdls_tb %>% purrr::pmap_chr(~paste0(..1," (",..2,")")) %>% purrr::pluck(2),") (D) Scatter plots of observed and predicted utility scores by timepoint (", results_ls$ttu_lngl_ls$best_mdls_tb %>% purrr::pmap_chr(~paste0(..1," (",..2,")")) %>% purrr::pluck(2),")"),echo=F, out.width = "400px"}
+```{r fig2, fig.cap=make_dnsty_and_sctr_plt_title(results_ls),echo=F, out.width = "400px"}
 knitr::include_graphics(results_ls$paths_to_figs_ls$composite)
 ```

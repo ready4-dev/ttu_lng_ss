@@ -4,7 +4,7 @@ author: "Matthew Hamilton"
 date: "28/01/2021"
 output: html_document
 ---
-```{r predrscors, tab.cap='Candidate predictors distribution parameters and correlations with AQoL-6D utility', tab.id = 'predrscors', results="asis"}
+```{r predrscors, tab.cap=paste0("Candidate predictor",ifelse(get_nbr_of_predrs(results_ls, as_words_1L_lgl = F)>1,"s",""), " distribution parameters and correlations with AQoL-6D utility"), tab.id = 'predrscors', results="asis"}
 tb <- results_ls$tables_ls$pred_dist_and_cors 
 tb <- tb %>%
     dplyr::mutate(label = label %>% purrr::map_chr(~stringr::str_remove_all(.x," \\(Weighted total\\)")))

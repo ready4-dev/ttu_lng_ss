@@ -25,7 +25,10 @@ Data from `r get_nbr_of_predrs(results_ls)` measure`r ifelse(get_nbr_of_predrs(r
 Population characteristic data were `r get_popl_descvs(results_ls)`.
 
 ## Statistical analysis
-We applied a generalised form of the transfer to utility analysis algorithm developed by Hamilton, Gao and colleagues [@HamiltonGao2021]. Basic descriptive statistics were used to characterise the cohort in terms of baseline population variables. Pearson’s Product Moment Correlations (*r*) were used to determine the relationships between candidate predictors and the `r get_hlth_utl_nm(results_ls)` utility score.
+We implemented the generalised form of the study analysis algorithm developed by Hamilton, Gao and colleagues [@HamiltonGao2021], the key steps of which are described as follows.
+
+### Descriptive statistics
+Basic descriptive statistics were used to characterise the cohort in terms of baseline population variables. Pearson’s Product Moment Correlations (*r*) were used to determine the relationships between candidate predictors and the `r get_hlth_utl_nm(results_ls)` utility score.
 
 ### TTU regression models 
 We compared predictive performance of a range of models predicting `r get_hlth_utl_nm(results_ls)` utility scores using the candidate predictor that had the highest Pearson correlation coefficient with utility scores. The models compared include `r get_mdl_cmprsns(results_ls, describe_1L_lgl = F)`. `r get_mdl_cmprsns(results_ls)`. Ten-fold cross-validation was used to compare model fitting using training datasets and predictive ability using testing datasets using three indicators including R^2^, root mean square error (RMSE) and mean absolute error (MAE)  [@RN20; @RN19].
