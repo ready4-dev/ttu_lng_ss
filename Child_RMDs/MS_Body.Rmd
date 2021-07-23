@@ -19,7 +19,7 @@ bibliography: ../Data/references.bib
 ```{r child="../Child_RMDs/MS_Results.Rmd", echo=FALSE}
 ```
 
-# Discussion
+<!-- # Discussion -->
 ```{r child="../Child_RMDs/MS_Discussion.Rmd", echo=FALSE}
 ```
 

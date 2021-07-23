@@ -17,7 +17,7 @@ The mean ratio between the within-person and between-person associated coefficie
 
 <!-- Figure start -->Distribution of observed and predicted utility scores and their association from `r results_ls$ttu_lngl_ls$best_mdls_tb %>% purrr::pmap_chr(~paste0(..1," (",..2,")"))  %>% paste0(collapse = ", ") %>% stringi::stri_replace_last(fixed = ",", " and")` using `r results_ls$predr_var_nms_chr %>% paste0(collapse = ", ") %>% stringi::stri_replace_last(fixed = ",", " and")` are plotted in Figure \@ref(fig:fig2)<!-- Figure end -->. <!-- Author judgment start -->
 
-`r make_lngl_ttu_with_covars_text(results_ls)` <!-- Table start --><!-- Comment - need to make the following tables conditional on covariates being evaluated -->(see `r ifelse(params$output_type_1L_chr=="Word","","Tables")` \@ref(tab:coefslongtb) and \@ref(tab:coefsglmtb))<!-- Table end -->. 
+`r make_lngl_ttu_with_covars_text(results_ls)` <!-- Table start --><!-- Comment - need to make the following tables conditional on covariates being evaluated -->(see `r ifelse(params$output_type_1L_chr=="Word","","Tables")` \@ref(tab:coefscovarstype1) and \@ref(tab:coefscovarstype2))<!-- Table end -->. 
 
 <!-- Author judgment start --> `r ifelse(is.null(results_ls$secondary_chr),"",results_ls$secondary_chr[2])` 
 Detailed summaries of all models are available in the online data repository (see "Availability of data and materials").

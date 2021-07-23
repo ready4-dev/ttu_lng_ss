@@ -3,4 +3,4 @@ title: "COI"
 output: html_document
 ---
 
-None declared.
+`r make_coi_text(results_ls)`

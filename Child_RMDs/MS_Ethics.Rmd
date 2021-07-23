@@ -2,4 +2,4 @@
 title: "MS_Ethics"
 output: html_document
 ---
-Add ethics text here. 
+`r make_ethics_text(results_ls)`

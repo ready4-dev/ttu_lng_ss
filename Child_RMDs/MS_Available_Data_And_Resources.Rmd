@@ -3,5 +3,4 @@ title: "MS_Available_Data_And_Resources"
 output: html_document
 ---
 
-
-`r ifelse(is.null(results_ls$dv_ds_nm_and_url_chr),"None available", paste0("Detailed results in the form of catalogues of the TTU models produced by this study and other supporting information are available in the online repository: ",results_ls$dv_ds_nm_and_url_chr[2]))` 
+`r make_data_availability_text(results_ls)` 
