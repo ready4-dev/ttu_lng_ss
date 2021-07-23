@@ -9,433 +9,107 @@ library(officedown)
 library(TTU)
 ```
 ```{r}
-get_background_text <- function(results_ls){
-  text_1L_chr <- results_ls$study_descs_ls$background_1L_chr
-  return(text_1L_chr)
-}
-get_conclusion_text <- function(results_ls){
-  text_1L_chr <- results_ls$study_descs_ls$conclusion_1L_chr
-  return(text_1L_chr)
-}
-get_lngl_ttu_types <- function(results_ls,
-                               collapse_1L_lgl = T){
-  mdl_types_chr <- results_ls$ttu_lngl_ls$best_mdls_tb$model_type 
-  if(collapse_1L_lgl){
-    mdl_types_chr <- mdl_types_chr %>% 
-      paste0(collapse = ", ") %>% 
-      stringi::stri_replace_last(fixed = ",", " and")
-  }
-  return(mdl_types_chr)
-}
-make_cndt_predr_text <- function(results_ls,
-                                 type_1L_chr = "description"){
-  nbr_of_predrs_1L_int <- get_nbr_of_predrs(results_ls, 
-                                                 as_words_1L_lgl = F)
-  if(type_1L_chr == "description"){
-      text_1L_chr <- paste0(get_nbr_of_predrs(results_ls) %>% Hmisc::capitalize(),
-                        " measure",
-                        ifelse(nbr_of_predrs_1L_int>1,
-                               "s",
-                               ""),
-                        " of ",
-                        get_nbr_of_predrs_by_ctg(results_ls),
-                        ifelse(nbr_of_predrs_1L_int>1," were"," was"),
-                        " used as ",
-                        ifelse(nbr_of_predrs_1L_int>1,
-                               "",
-                               "a "),
-                        "candidate predictor",
-                        ifelse(nbr_of_predrs_1L_int>1,
-                               "s",
-                               ""),
-                        " to construct TTU models.")
-  }
-  if(type_1L_chr == "comparison"){
-    text_1L_chr <- paste0(ifelse(nbr_of_predrs_1L_int > 1,
-                                 paste0("We compared the usefulness of the candidate predictors by using a random forest model including ",
-                                        ifelse(nbr_of_predrs_1L_int > 2, 
-                                               paste0("all ",
-                                                      get_nbr_of_predrs(results_ls)),
-                                               "both"),
-                                        " candidate predictors and by evaluating the independent predictive ability of different candidate predictors using 10-fold cross-validation."),
-                                 ""))
-  }
-  return(text_1L_chr)
-  }
-make_coi_text <- function(results_ls){
-  text_1L_chr <- ifelse(is.null(results_ls$study_descs_ls$coi_1L_chr),
-                        "",
-                        results_ls$study_descs_ls$coi_1L_chr)
-  return(text_1L_chr)
-}
-make_data_availability_text <- function(results_ls){
-  text_1L_chr <- ifelse(is.null(results_ls$dv_ds_nm_and_url_chr),
-                        "None available", 
-                        paste0("Detailed results in the form of catalogues of the TTU models produced by this study and other supporting information are available in the online repository: ",results_ls$dv_ds_nm_and_url_chr[2]))
-  return(text_1L_chr)
-}
-make_ethics_text <- function(results_ls){
-  text_1L_chr <- ifelse(is.null(results_ls$study_descs_ls$ethics_1L_chr),
-                        "",
-                        results_ls$study_descs_ls$ethics_1L_chr)
-  return(text_1L_chr)
-}
-make_funding_text <- function(results_ls){
-  text_1L_chr <- ifelse(is.null(results_ls$study_descs_ls$funding_1L_chr),
-                        "",
-                        results_ls$study_descs_ls$funding_1L_chr)
-  return(text_1L_chr)
-}
-make_lngl_ttu_with_covars_text <- function(results_ls){
-  text_1L_chr <- ifelse((is.na(results_ls$ttu_lngl_ls$incld_covars_chr) | length(results_ls$ttu_lngl_ls$incld_covars_chr) == 0),
-                        "",
-                        paste0("We also evaluated models with ",
-                        results_ls$ttu_lngl_ls$incld_covars_chr %>% 
-                          paste0(collapse = ", ") %>% 
-                          stringi::stri_replace_last(fixed = ",", " and") %>% 
-                          paste0(" at baseline"),
-                        " and ",
-                        results_ls$ttu_lngl_ls$incld_covars_chr %>% 
-                          paste0(collapse = ", ") %>% 
-                          stringi::stri_replace_last(fixed = ",", " and") %>% 
-                          paste0(" change from baseline"),
-                         " added to ",
-                        names(results_ls$study_descs_ls$predr_ctgs_ls) %>% 
-                          tolower() %>% 
-                          paste0(collapse = ", ") %>% 
-                          stringi::stri_replace_last(fixed = ",", " and"),
-                        " predictors"))
-  return(text_1L_chr )
-}
-make_lngl_ttu_r2_text <- function(results_ls,
-                                  part_int = 1){
-  if(1 %in% part_int){
-      text_1L_chr <- ifelse(length(results_ls$candidate_predrs_chr) == 1,
-                        "",
-                        paste0("In ",
-                               ifelse(length(results_ls$ttu_lngl_ls$best_mdls_tb$name_chr %>% unique())>1,
-                                      "",
-                                      ifelse(nrow(results_ls$ttu_lngl_ls$best_mdls_tb)==2,
-                                             "both ",
-                                             "all ")),
-                               results_ls$ttu_lngl_ls$best_mdls_tb$model_type %>% 
-                                 paste0(collapse = ", ") %>% 
-                                 stringi::stri_replace_last(fixed = ",", " and"),
-                               " models, the prediction models using ",
-                               ifelse(length(results_ls$ttu_lngl_ls$best_mdls_tb$name_chr %>% unique())==1,
-                                      results_ls$ttu_lngl_ls$best_mdls_tb$name_chr %>% unique(),
-                                      results_ls$ttu_lngl_ls$best_mdls_tb$name_chr %>% 
-                                        paste0(collapse = ", ") %>% 
-                                        stringi::stri_replace_last(fixed = ",", " and") %>% 
-                                        paste0(" respectively")),
-                               " had the highest R^2^ (",
-                               results_ls$ttu_lngl_ls$best_mdls_tb$r2_dbl %>% 
-                                 stringr::str_squish() %>% 
-                                 paste0(collapse = ", ") %>% 
-                                 stringi::stri_replace_last(fixed = ",", " and"),
-                               ")"))
-  }else{
-    text_1L_chr <- ""
-  }
-  if(2 %in% part_int){
-    mdl_types_chr <- results_ls$ttu_lngl_ls$best_mdls_tb$model_type
-    mdl_r2_var_nms_chr <- intersect(results_ls$tables_ls$ind_preds_coefs_tbl %>% names(),
-                                    c("R2_OLS_CLL","R2_GLM_GSN_LOG"))
-    mdl_r2_mins_dbl <- mdl_r2_var_nms_chr %>%
-      purrr::map_dbl(~results_ls$tables_ls$ind_preds_coefs_tbl %>%
-                       dplyr::filter(!is.na(!!rlang::sym(.x))) %>% 
-                       dplyr::pull(!!rlang::sym(.x)) %>% 
-                       as.numeric() %>% 
-                       min())
-    mdl_r2_maxs_dbl <- mdl_r2_var_nms_chr %>%
-      purrr::map_dbl(~results_ls$tables_ls$ind_preds_coefs_tbl %>%
-                       dplyr::filter(!is.na(!!rlang::sym(.x))) %>% 
-                       dplyr::pull(!!rlang::sym(.x)) %>% 
-                       as.numeric() %>% 
-                       max())
-    text_1L_chr <- paste0(text_1L_chr,
-                          ifelse(1 %in% part_int,". ",""),
-                          list(mdl_types_chr,
-                               mdl_r2_mins_dbl,
-                               mdl_r2_maxs_dbl,
-                               1:length(mdl_types_chr)) %>%
-      purrr::pmap_chr(~ paste0(ifelse(..4 == 1,"R^2^ was ",""),
-                              ifelse(length(results_ls$candidate_predrs_chr) == 1,
-                                     paste0(,..2, " for the "),
-                                     paste0(ifelse(..2==..3,
-                                                   paste0("",..2),
-                                                   paste0("between ",..2," and ",..3," for all ")))),
-                              ..1,
-                              ifelse(length(results_ls$candidate_predrs_chr) == 1,
-                                     paste0(""),
-                                     paste0("s"))
-                              )) %>% 
-      paste0(collapse = ", ") %>% 
-      stringi::stri_replace_last(fixed = ",", " and"),
-                          ".")
-  }
-  return(text_1L_chr)
-}
-make_within_between_ratios_text <- function(results_ls){
-  text_1L_chr <- results_ls$ttu_lngl_ls$cs_ts_ratios_tb %>% 
-    purrr::pmap_chr(~paste0(..2, " for ", ..1)) %>% 
-    paste0(collapse = ", ") %>% 
-    stringi::stri_replace_last(fixed = ",", " and")
-  return(text_1L_chr)
-}
-make_scndry_anlys_text <- function(results_ls){
-  text_1L_chr <- ifelse(get_nbr_of_scndry_analyses(results_ls, 
-                                                   as_words_1L_lgl = F) == 0,
-                        "",
-                        paste0(get_nbr_of_scndry_analyses(results_ls) ,
-                               " secondary analys",
-                               ifelse(get_nbr_of_scndry_analyses(results_ls, as_words_1L_lgl = F) == 1,
-                                      "is was ","es were "),
-                               "undertaken. ", 
-                               get_scndry_anlys_descs(results_ls)))
-  return(text_1L_chr)
-}
-make_scaling_text <- function(results_ls,
-                              table_1L_chr = "cfscl"){
-  if(table_1L_chr == "cfscl"){
-    table_df <- results_ls$tables_ls$ind_preds_coefs_tbl
-  }
-  if(table_1L_chr == "coefscovarstype1"){
-    table_df <- results_ls$tables_ls$mdl_type_1_covar_mdls_tb
-  }
-  predrs_chr <- table_df$Parameter %>% setdiff(c("SD (Intercept)","Intercept")) %>% stringr::str_replace_all(" model","") %>% stringr::str_replace_all(" baseline","") %>% stringr::str_replace_all(" change","") %>% unique()
-  predrs_lup <- results_ls$mdl_ingredients_ls$predictors_lup %>%
-    dplyr::filter(short_name_chr %in% predrs_chr)
-  scaling_dbl <- predrs_lup$mdl_scaling_dbl %>% unique()
-  text_1L_chr <- ifelse(all(scaling_dbl==1),
-                        "",
-                        paste0("Note: ",
-                               
-                        scaling_dbl %>% 
-                          purrr::map_chr(~ {
-                            scaled_predrs_chr <- predrs_lup %>%
-                                           dplyr::filter(mdl_scaling_dbl == .x) %>%
-                                           dplyr::pull(short_name_chr) %>%
-                                           sort()
-                            ifelse(.x ==1, 
-                                   "",
-                                   paste0("The ",
-                                          scaled_predrs_chr %>%
-                                            paste0(collapse = ", ") %>% 
-                                            stringi::stri_replace_last(fixed = ",", " and"),
-                                          " parameter",
-                                          ifelse(length(scaled_predrs_chr) == 1,
-                                                 " was",
-                                                 "s were"),
-                                          " first multiplied by ",
-                                          .x,
-                                          "."))
-                            }
-                            ) %>%
-                          paste0(collapse = " ")))
-  return(text_1L_chr)
-}
-make_selected_mdl_text <- function(results_ls){
-  length_1L_int <- length(results_ls$ttu_cs_ls$selected_mdls_chr)
-  text_1L_chr <- paste0(ifelse(length_1L_int == 2,"Both ",""),
-                        results_ls$ttu_cs_ls$selected_mdls_chr %>% 
-                          paste0(collapse = ", ") %>% 
-                          stringi::stri_replace_last(fixed = ",", " and"),
-                        ifelse(length_1L_int >1," were"," was"),
-                        " selected for further evaluation.")
-  return(text_1L_chr)
-
-}
-print_cohort_table <- function(params_ls,
-                               caption_1L_chr,
-                               mkdn_tbl_ref_1L_chr){
-  results_ls <- params_ls$results_ls
-  df <- results_ls$tables_ls$participant_descs 
-  df$variable <- gsub("\\s*\\([^\\)]+\\)","",df$variable)
-  if(params_ls$output_type_1L_chr == "PDF"){
-  df <- df %>%
-  dplyr::mutate_all(~ stringr::str_replace(.x,"%","\\\\%") %>%
-                      stringr::str_replace(",","\\\\,")) 
-}
-if(params_ls$output_type_1L_chr == "PDF"){
-  names(df) <- c("","",
-               "(N =",paste0(results_ls$cohort_ls$n_inc_1L_dbl,")"),
-               "(N =",paste0(results_ls$cohort_ls$n_fup_1L_dbl,")"))
-  df %>%
-     kableExtra::kbl(booktabs = T,
-                     caption = knitr::opts_current$get("tab.cap"),
-                     escape = F) %>%
-    kableExtra::kable_styling() %>%
-    kableExtra::column_spec(3:6, width = "3em") %>%
-    kableExtra::column_spec(1, bold = T, width = "14em") %>%
-    kableExtra::add_header_above(c(" ", " ", "Baseline" = 2, "Follow-Up" = 2)) %>%
-    kableExtra::collapse_rows(columns = 1)
-}else{
-  df <- df %>% transform_tb_for_merged_col_1(output_type_1L_chr = params_ls$output_type_1L_chr) 
-  add_to_row_ls <- make_bl_fup_add_to_row_ls(df,
-                                             n_at_bl_1L_int = results_ls$cohort_ls$n_inc_1L_dbl,
-                                             n_at_fup_1L_int = results_ls$cohort_ls$n_fup_1L_dbl)
-  df %>%
-  ready4show::print_table(output_type_1L_chr = params_ls$output_type_1L_chr,
-                          caption_1L_chr = caption_1L_chr,
-                          mkdn_tbl_ref_1L_chr = paste0("tab:",knitr::opts_current$get("tab.id")),
-                          use_rdocx_1L_lgl = ifelse(params_ls$output_type_1L_chr=="Word",T,F),
-                          add_to_row_ls = add_to_row_ls,
-                          sanitize_fn = force) 
-}
-}
-print_corls_tbl <- function(params_ls,
-                            caption_1L_chr,
-                            mkdn_tbl_ref_1L_chr){
-  results_ls <- params_ls$results_ls
-  tb <- results_ls$tables_ls$pred_dist_and_cors 
-  tb <- tb %>%
-    dplyr::mutate(label = label %>% 
-                    purrr::map_chr(~stringr::str_remove_all(.x," \\(Weighted total\\)")))
-  if(params_ls$output_type_1L_chr == "PDF"){
-    names(tb) <- c("","",
-                   "(N =",
-                   paste0(results_ls$cohort_ls$n_inc_1L_dbl,")"),
-                   "(N =",paste0(results_ls$cohort_ls$n_fup_1L_dbl,")"),
-                   "\\textit{p}")
-tb %>%
-     kableExtra::kbl(booktabs = T,
-                     caption = knitr::opts_current$get("tab.cap"),
-                     escape = F) %>%
-  kableExtra::kable_styling() %>%
-    kableExtra::column_spec(3:6, width = "3em") %>%
-  kableExtra::column_spec(1, bold = T, width = "14em") %>%
-  kableExtra::add_header_above(c(" ", " ", "Baseline" = 2, "Follow-Up" = 2, " ")) %>%
-    kableExtra::collapse_rows(columns = 1)
-}else{
-  tb <- tb %>% 
-transform_tb_for_merged_col_1(output_type_1L_chr = params_ls$output_type_1L_chr)
- tb %>%
- ready4show::print_table(output_type_1L_chr = params_ls$output_type_1L_chr,
-                         caption_1L_chr = caption_1L_chr,
-                         mkdn_tbl_ref_1L_chr = mkdn_tbl_ref_1L_chr,
-                         use_rdocx_1L_lgl = ifelse(params_ls$output_type_1L_chr=="Word",T,F),
-                         add_to_row_ls = add_to_row_ls,
-                         sanitize_fn = force)
-}
-}
-print_covar_ttu_tbls <- function(params_ls,
-                                 caption_1L_chr,
-                                 table_1L_chr,
-                                 ref_1L_int = 1){
-    results_ls <- params_ls$results_ls
-    df <- results_ls$tables_ls %>%
-      purrr::pluck(paste0("mdl_type_",ref_1L_int,"_covar_mdls_tb")) %>%
-      dplyr::mutate(Parameter = Parameter %>% purrr::map_chr(~stringr::str_replace_all(.x,"_"," ")))
-if(params_ls$output_type_1L_chr == "PDF"){
-  add_to_row_ls <- list()
-  add_to_row_ls$pos <- list(0, nrow(df))
-  add_to_row_ls$command <- c("Parameter & Estimate	& SE	& 95CI & R2	& Sigma\\\\\n",
-                             paste0("\\hline\n",
-                                    "{\\footnotesize ",
-                                    make_scaling_text(results_ls, 
-                                                      table_1L_chr = knitr::opts_current$get("tab.id")),
-                                    "}\n"))
-  df$Parameter <- df$Parameter %>% purrr::map_chr(~ifelse(endsWith(.x,"
-                                                                   model"),
-                                                          paste0("\\textbf{",.x,"}"),.x))
-}else{
-  add_to_row_ls <- NULL
-}
-df %>%
-  ready4show::print_table(output_type_1L_chr = params_ls$output_type_1L_chr,
-                          caption_1L_chr = caption_1L_chr,
-                          mkdn_tbl_ref_1L_chr = paste0("tab:",table_1L_chr),
-                          use_rdocx_1L_lgl = ifelse(params_ls$output_type_1L_chr=="Word",T,F),
-                          add_to_row_ls = add_to_row_ls,
-                          footnotes_chr = make_scaling_text(results_ls, 
-                                                    table_1L_chr = table_1L_chr),
-                          hline_after_ls = c(-1,0),
-                          sanitize_fn = force)
-  
-}
-print_indpnt_predrs_coefs_tbl <- function(params_ls,
-                                          caption_1L_chr,
-                                          mkdn_tbl_ref_1L_chr){
-    results_ls <- params_ls$results_ls
-    tb <- results_ls$tables_ls$ind_preds_coefs_tbl
-    add_to_row_ls <- list()
-    add_to_row_ls$pos <- list(-1, 0, nrow(tb))
-    add_to_row_ls$command <- c(paste0("\\toprule \n", 
-                                      "&\\multicolumn{5}{c}{",
-                                      paste0(results_ls$ttu_lngl_ls$best_mdls_tb[[1,"model_type"]],
-                                             " - ",
-                                             results_ls$ttu_lngl_ls$best_mdls_tb[[1,"link_and_tfmn_chr"]]),
-                                      "}&\\multicolumn{5}{c}{",
-                                      paste0(results_ls$ttu_lngl_ls$best_mdls_tb[[2,"model_type"]],
-                                             " - ",                                             results_ls$ttu_lngl_ls$best_mdls_tb[[2,"link_and_tfmn_chr"]]),
-                                      "}\\\\\n"),
-                               paste0("Parameter & Estimate	& SE	& 95CI & R2	& Sigma & Estimate & SE	& 95CI & R2 & Sigma \\\\\n",
-                                      "\\midrule \n"),
-                               paste0("\\hline\n","{\\footnotesize ",
-                                      make_scaling_text(results_ls),
-                                      "}\n")
-                               )
-if(params_ls$output_type_1L_chr =="Word"){
-  tb$Parameter <- stringr::str_replace_all(stringr::str_replace_all(stringr::str_replace_all(tb$Parameter, '\\\\textbf', ''), '\\{', ''), '\\}', '')
-}
-if(params_ls$output_type_1L_chr == "PDF"){
-  tb$Parameter <- tb$Parameter %>% purrr::map_chr(~ifelse(endsWith(.x,"
-                                                                   model"),
-                                                          paste0("\\textbf{",.x,"}"),.x))
-}
-tb %>%
-  ready4show::print_table(output_type_1L_chr = params_ls$output_type_1L_chr,
-                          caption_1L_chr = caption_1L_chr,
-                          mkdn_tbl_ref_1L_chr = mkdn_tbl_ref_1L_chr, 
-                          use_rdocx_1L_lgl = ifelse(params$output_type_1L_chr=="Word",T,F),
-                          add_to_row_ls = add_to_row_ls,
-                          footnotes_chr = make_scaling_text(results_ls),
-                          sanitize_fn = force)
-  
-}
-print_ten_folds_tbl <- function(params_ls,
-                                caption_1L_chr,
-                                mkdn_tbl_ref_1L_chr,
-                                ref_1L_int = 1){
-  results_ls <- params_ls$results_ls
-  if(ref_1L_int ==1){
-    df <- results_ls$tables_ls$tenf_phq9 %>% 
-  dplyr::mutate(Model = gsub('"', '', Model)) %>%
-  dplyr::mutate(dplyr::across(.cols = dplyr::everything(), ~ .x %>%
-                                stringr::str_replace_all("  NA", NA_character_)))
-  }else{
-    df <- results_ls$tables_ls$tenf_glm
-  }
-  #df <- df 
-if(params_ls$output_type_1L_chr == "PDF"){
-  add_to_row_ls <- list()
-  add_to_row_ls$pos <- list(0,0,0,nrow(df))
-  add_to_row_ls$command <- c("&\\multicolumn{3}{c}{Training model fit}&\\multicolumn{3}{c}{Testing model fit}\\\\\n",
-                      "&\\multicolumn{3}{c}{(averaged over 10 folds)}&\\multicolumn{3}{c}{(averaged over 10 folds)}\\\\\n",
-                      "Model & R2	& RMSE & MAE &  R2	& RMSE & MAE  \\\\\n",
-                      paste0("\\hline\n","{\\footnotesize  RMSE: Root Mean Squared Error; MAE: Mean Absolute Error}\n"))
-    if(ref_1L_int ==1){
-      df$Model <- df$Model %>% purrr::map_chr(~ifelse(.x %in% c("GLM","OLS"),
-                                                paste0("\\textbf{",
-                                                       .x,
-                                                       "}"),.x))
-    }else{
-        df$Predictor <- df$Predictor %>% purrr::map_chr(~paste0("\\textbf{",.x,"}"))
-    }
- }else{
-  add_to_row_ls <- NULL
-}
-df %>%
-  ready4show::print_table(output_type_1L_chr = params_ls$output_type_1L_chr,
-                          caption_1L_chr = caption_1L_chr,
-                          mkdn_tbl_ref_1L_chr = mkdn_tbl_ref_1L_chr,
-                          use_rdocx_1L_lgl = ifelse(params_ls$output_type_1L_chr=="Word",T,F),
-                          add_to_row_ls = add_to_row_ls,
-                          hline_after_ls = c(-1,0),
-                          sanitize_fn = force)
-  
-}
+# make_covar_ttu_tbl_title <- function(results_ls,
+#                                      ref_1L_int = 1){
+#   title_1L_chr <- paste0('Estimated coefficients from longitudinal TTU models based on individual candidate predictors with ',results_ls$ttu_lngl_ls$incld_covars_chr %>% paste0(collapse = ", ") %>% stringi::stri_replace_last(fixed = ",", " and"),' using ', results_ls$ttu_lngl_ls$best_mdls_tb[[ref_1L_int,"model_type"]], ' (', results_ls$ttu_lngl_ls$best_mdls_tb[[ref_1L_int,"link_and_tfmn_chr"]],')')
+#   return(title_1L_chr)
+#                                      }
+# make_ten_folds_tbl_title <- function(results_ls,
+#                                      ref_1L_int = 1){
+#   title_1L_chr <- ifelse(ref_1L_int == 1,
+#                          paste0('10-fold cross-validated model fitting index for different ',
+#                          results_ls$ttu_cs_ls$best_mdl_types_ls %>% 
+#                            names() %>% 
+#                            paste0(collapse = ", ") %>% 
+#                            stringi::stri_replace_last(fixed = ",", " and"), 
+#                          ' models using ',
+#                          results_ls$ttu_cs_ls$cs_mdls_predrs_seq_dscdng_chr[1],
+#                          ' as predictor with the baseline data'),
+#                          paste0('10-fold cross-validated model fitting index for different candidate predictors estimated using ',
+#                                 results_ls$ttu_cs_ls$selected_mdls_chr[1],
+#                                 ' with the baseline data'))
+#   return(title_1L_chr)
+# }
+# #
+# make_scaling_text <- function(results_ls, ########TEMP DUPLICATE
+#                               table_1L_chr = "cfscl"){
+#   if(table_1L_chr == "cfscl"){
+#     table_df <- results_ls$tables_ls$ind_preds_coefs_tbl
+#   }else{
+#     if(startsWith(table_1L_chr,"coefscovarstype")){
+#       table_df <- results_ls$tables_ls %>%
+#         purrr::pluck(paste0("mdl_type_",
+#              table_1L_chr %>% stringr::str_remove("coefscovarstype"),
+#              "_covar_mdls_tb"))
+#     }
+#   }
+#   predrs_chr <- table_df$Parameter %>% setdiff(c("SD (Intercept)","Intercept")) %>% stringr::str_replace_all(" model","") %>% stringr::str_replace_all(" baseline","") %>% stringr::str_replace_all(" change","") %>% unique()
+#   predrs_lup <- results_ls$mdl_ingredients_ls$predictors_lup %>%
+#     dplyr::filter(short_name_chr %in% predrs_chr)
+#   scaling_dbl <- predrs_lup$mdl_scaling_dbl %>% unique()
+#   text_1L_chr <- ifelse(all(scaling_dbl==1),
+#                         "",
+#                         paste0("Note: ",
+# 
+#                                scaling_dbl %>%
+#                                  purrr::map_chr(~ {
+#                                    scaled_predrs_chr <- predrs_lup %>%
+#                                      dplyr::filter(mdl_scaling_dbl == .x) %>%
+#                                      dplyr::pull(short_name_chr) %>%
+#                                      sort()
+#                                    ifelse(.x ==1,
+#                                           "",
+#                                           paste0("The ",
+#                                                  scaled_predrs_chr %>%
+#                                                    paste0(collapse = ", ") %>%
+#                                                    stringi::stri_replace_last(fixed = ",", " and"),
+#                                                  " parameter",
+#                                                  ifelse(length(scaled_predrs_chr) == 1,
+#                                                         " was",
+#                                                         "s were"),
+#                                                  " first multiplied by ",
+#                                                  .x,
+#                                                  "."))
+#                                  }
+#                                  ) %>%
+#                                  paste0(collapse = " ")))
+#   return(text_1L_chr)
+# }
+# print_covar_ttu_tbls <- function(params_ls,
+#                                  caption_1L_chr,
+#                                  table_1L_chr,
+#                                  ref_1L_int = 1){
+#   results_ls <- params_ls$results_ls
+#   df <- results_ls$tables_ls %>%
+#     purrr::pluck(paste0("mdl_type_",ref_1L_int,"_covar_mdls_tb")) %>%
+#     dplyr::mutate(Parameter = Parameter %>% purrr::map_chr(~stringr::str_replace_all(.x,"_"," ")))
+#   if(params_ls$output_type_1L_chr == "PDF"){
+#     add_to_row_ls <- list()
+#     add_to_row_ls$pos <- list(0, nrow(df))
+#     add_to_row_ls$command <- c("Parameter & Estimate	& SE	& 95CI & R2	& Sigma\\\\\n",
+#                                paste0("\\hline\n",
+#                                       "{\\footnotesize ",
+#                                       make_scaling_text(results_ls,
+#                                                         table_1L_chr = knitr::opts_current$get("tab.id")),
+#                                       "}\n"))
+#     df$Parameter <- df$Parameter %>% purrr::map_chr(~ifelse(endsWith(.x,
+#                                                                      " model"),
+#                                                             paste0("\\textbf{",.x,"}"),.x))
+#   }else{
+#     add_to_row_ls <- NULL
+#   }
+#   df %>%
+#     ready4show::print_table(output_type_1L_chr = params_ls$output_type_1L_chr,
+#                             caption_1L_chr = caption_1L_chr,
+#                             mkdn_tbl_ref_1L_chr = paste0("tab:",table_1L_chr),
+#                             use_rdocx_1L_lgl = ifelse(params_ls$output_type_1L_chr=="Word",T,F),
+#                             add_to_row_ls = add_to_row_ls,
+#                             footnotes_chr = make_scaling_text(results_ls,
+#                                                               table_1L_chr = table_1L_chr),
+#                             hline_after_ls = c(-1,0),
+#                             sanitize_fn = force)
+# 
+# }
 ```
 
 ```{r results = 'asis'}
