@@ -8,7 +8,6 @@ output: html_document
 ## Cohort characteristics
 <!-- Table start -->Participants characteristics at baseline and follow-up are displayed in `r ifelse(params$output_type_1L_chr=="Word","","Table")` \@ref(tab:participantstb).<!-- Table end --> This study included `r make_nbr_included_text(results_ls)`. 
 
-<!-- `r if(is.null(child_docs_ls$Cohort_Profile)){"(Insert \\@ref(tab:participantstb) about here)"}` -->
 ```{r, child = child_docs_ls$Cohort_Profile, echo=FALSE}
 ```
 

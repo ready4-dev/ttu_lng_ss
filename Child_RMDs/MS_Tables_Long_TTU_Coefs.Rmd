@@ -5,15 +5,13 @@ date: "27/01/2021"
 output: html_document
 ---
 
-\blandscape
-<!---BLOCK_LANDSCAPE_START--->
-
-```{r cfscl, tab.cap='Estimated coefficients from longitudinal TTU models', tab.id = 'cfscl', results="asis"}
-print_indpnt_predrs_coefs_tbl(params,
-                              caption_1L_chr = knitr::opts_current$get("tab.cap"),
-                              mkdn_tbl_ref_1L_chr = paste0("tab:",knitr::opts_current$get("tab.id")))
+```{r echo = F}
+if(length(results_ls$ttu_lngl_ls$best_mdls_tb$model_type) > 2){
+  ttu_coefs_child_chr <- "../Child_RMDs/MS_Tables_Long_TTU_Coefs_Seprt.Rmd"
+}else{
+  ttu_coefs_child_chr <- "../Child_RMDs/MS_Tables_Long_TTU_Coefs_Joined.Rmd"
+}
 
 ```
-
-\elandscape
-<!---BLOCK_LANDSCAPE_STOP--->
+```{r child=ttu_coefs_child_chr, echo=FALSE}
+```

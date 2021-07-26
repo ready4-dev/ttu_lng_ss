@@ -17,16 +17,10 @@ print_ten_folds_tbl(params,
                     mkdn_tbl_ref_1L_chr = paste0("tab:",knitr::opts_current$get("tab.id")),
                     ref_1L_int = 2)
 ```
-\newpage
-```{r coefscovarstype1, tab.cap=make_covar_ttu_tbl_title(results_ls), tab.id = 'coefscovarstype1', echo = F, results = 'asis'}
-print_covar_ttu_tbls(params,
-                     caption_1L_chr = knitr::opts_current$get("tab.cap"),
-                     table_1L_chr = knitr::opts_current$get("tab.id"))
+```{r, eval = length(results_ls$ttu_lngl_ls$incld_covars_chr)>0, echo=FALSE, results='asis'}
+purrr::map(1:length(results_ls$ttu_lngl_ls$best_mdls_tb$model_type),
+           ~ list(coefscovarstype = paste0("coefscovarstype",.x),
+                         ref_1L_int = .x)) %>%
+knit_from_tmpl(path_to_tmpl_1L_chr = "../Child_RMDs/TA_Tables_Covars_Coefs.Rmd")
 ```
-\newpage
-```{r coefscovarstype2, tab.cap=make_covar_ttu_tbl_title(results_ls, ref_1L_int =2), tab.id = 'coefscovarstype2', echo = F, results = 'asis'}
-print_covar_ttu_tbls(params,
-                     caption_1L_chr = knitr::opts_current$get("tab.cap"),
-                     table_1L_chr = knitr::opts_current$get("tab.id"),
-                     ref_1L_int = 2)
-```
+

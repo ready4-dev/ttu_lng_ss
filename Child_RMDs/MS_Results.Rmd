@@ -17,5 +17,5 @@ output: html_document
 ```
 ```{r child="MS_Results_Lngtl_TTU.Rmd", echo=FALSE}
 ```
-```{r child="MS_Results_Toolkit.Rmd", echo=FALSE}
+```{r child="MS_Results_Ratios.Rmd", echo=FALSE}
 ```

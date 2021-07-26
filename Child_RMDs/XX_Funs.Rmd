@@ -9,31 +9,62 @@ library(officedown)
 library(TTU)
 ```
 ```{r}
-# make_covar_ttu_tbl_title <- function(results_ls,
-#                                      ref_1L_int = 1){
-#   title_1L_chr <- paste0('Estimated coefficients from longitudinal TTU models based on individual candidate predictors with ',results_ls$ttu_lngl_ls$incld_covars_chr %>% paste0(collapse = ", ") %>% stringi::stri_replace_last(fixed = ",", " and"),' using ', results_ls$ttu_lngl_ls$best_mdls_tb[[ref_1L_int,"model_type"]], ' (', results_ls$ttu_lngl_ls$best_mdls_tb[[ref_1L_int,"link_and_tfmn_chr"]],')')
-#   return(title_1L_chr)
-#                                      }
-# make_ten_folds_tbl_title <- function(results_ls,
-#                                      ref_1L_int = 1){
-#   title_1L_chr <- ifelse(ref_1L_int == 1,
-#                          paste0('10-fold cross-validated model fitting index for different ',
-#                          results_ls$ttu_cs_ls$best_mdl_types_ls %>% 
-#                            names() %>% 
-#                            paste0(collapse = ", ") %>% 
-#                            stringi::stri_replace_last(fixed = ",", " and"), 
-#                          ' models using ',
-#                          results_ls$ttu_cs_ls$cs_mdls_predrs_seq_dscdng_chr[1],
-#                          ' as predictor with the baseline data'),
-#                          paste0('10-fold cross-validated model fitting index for different candidate predictors estimated using ',
-#                                 results_ls$ttu_cs_ls$selected_mdls_chr[1],
-#                                 ' with the baseline data'))
-#   return(title_1L_chr)
+# get_prefd_mdl_predrs <- function(results_ls){
+#   predrs_1L_chr <- results_ls$predr_var_nms_chr %>% 
+#     paste0(collapse = ", ") %>% 
+#     stringi::stri_replace_last(fixed = ",", " and")
+#   return(predrs_1L_chr)
 # }
-# #
-# make_scaling_text <- function(results_ls, ########TEMP DUPLICATE
+# get_selected_mixed_mdls <- function(results_ls,
+#                                     collapse_1L_lgl = T){
+#   mixed_mdls_xx <- results_ls$ttu_lngl_ls$best_mdls_tb %>% purrr::pmap_chr(~paste0(..1," (",..2,")"))  
+#   if(collapse_1L_lgl){
+#     mixed_mdls_xx <- mixed_mdls_xx  %>% 
+#       paste0(collapse = ", ") %>% 
+#       stringi::stri_replace_last(fixed = ",", " and")
+#   }
+#  return(mixed_mdls_xx)
+# }
+# make_covar_ttu_tbl_refs <- function(params_ls){
+#   results_ls <- params_ls$results_ls
+#   n_mdls_1L_int <- length(results_ls$ttu_lngl_ls$best_mdls_tb$model_type)
+#   n_covars_1L_int <- length(results_ls$ttu_lngl_ls$incld_covars_chr)
+#   text_1L_chr <- paste0(ifelse(n_covars_1L_int < 1,
+#                                "",
+#                                paste0(" (see ",
+#                                       ifelse(params$output_type_1L_chr=="Word","","Table"),
+#                                       "s ",
+#                                       paste0("\\@ref(tab:coefscovarstype",1:n_mdls_1L_int,")", collapse = ", ") %>%
+#                           stringi::stri_replace_last(fixed = ",", " and"),
+#                           ")"
+#                                         ))
+#   )
+#   return(text_1L_chr)
+# }
+# make_indpnt_predrs_lngl_tbls_ref <- function(params_ls){
+#   results_ls <- params_ls$results_ls
+#   n_mdls_1L_int <- length(results_ls$ttu_lngl_ls$best_mdls_tb$model_type)
+#   text_1L_chr <- paste0(ifelse(params$output_type_1L_chr=="Word","","Table"),
+#                         ifelse(n_mdls_1L_int < 3,
+#                                " \\@ref(tab:cfscl)",
+#                                paste0("s ",
+#                                       paste0("\\@ref(tab:cfscl",1:n_mdls_1L_int,")", collapse = ", ") %>%
+#                           stringi::stri_replace_last(fixed = ",", " and")
+#                                         ))
+#   )
+#   return(text_1L_chr)
+# }
+# make_indpnt_predrs_lngl_tbl_title <- function (results_ls, ref_1L_int = 1) 
+# {
+#     title_1L_chr <- paste0("Estimated coefficients for single predictor longitudinal TTU models using ", 
+#  results_ls$ttu_lngl_ls$best_mdls_tb[[ref_1L_int, 
+#             "model_type"]], " (", results_ls$ttu_lngl_ls$best_mdls_tb[[ref_1L_int, 
+#             "link_and_tfmn_chr"]], ")")
+#     return(title_1L_chr)
+# }
+# make_scaling_text <- function(results_ls,
 #                               table_1L_chr = "cfscl"){
-#   if(table_1L_chr == "cfscl"){
+#   if(startsWith(table_1L_chr,"cfscl")){
 #     table_df <- results_ls$tables_ls$ind_preds_coefs_tbl
 #   }else{
 #     if(startsWith(table_1L_chr,"coefscovarstype")){
@@ -75,30 +106,50 @@ library(TTU)
 #                                  paste0(collapse = " ")))
 #   return(text_1L_chr)
 # }
-# print_covar_ttu_tbls <- function(params_ls,
-#                                  caption_1L_chr,
-#                                  table_1L_chr,
-#                                  ref_1L_int = 1){
+# print_indpnt_predrs_lngl_mdl_coefs <- function(params_ls, 
+#                                                caption_1L_chr,
+#                                                ref_1L_int = 1,
+#                                                table_1L_chr){
+#     results_ls <- params_ls$results_ls
+#     mdl_type_1L_chr <- results_ls$mdl_ingredients_ls$mdls_lup$mdl_type_chr %>% 
+#       unique() %>%
+#       purrr::pluck(ref_1L_int)
+#     tb <- results_ls$tables_ls$ind_preds_coefs_tbl %>%
+#       dplyr::select(Parameter, names(.) %>% 
+#                       purrr::keep(~{
+#                         endsWith(.x,mdl_type_1L_chr)})) %>%
+#       dplyr::rename_with(.cols = names(.) %>% 
+#                       purrr::keep(~{
+#                         endsWith(.x,mdl_type_1L_chr)}), 
+#         ~ stringr::str_remove(.x,paste0("_",mdl_type_1L_chr)))
+#     tb %>%
+#       print_lngl_ttu_tbls(caption_1L_chr = caption_1L_chr,
+#                           params_ls = params_ls,
+#                           ref_1L_int = ref_1L_int,
+#                           table_1L_chr = table_1L_chr)
+# }
+# print_lngl_ttu_tbls <- function(table_df,
+#                                 params_ls,
+#                                 caption_1L_chr,
+#                                 table_1L_chr,
+#                                 ref_1L_int = 1){
 #   results_ls <- params_ls$results_ls
-#   df <- results_ls$tables_ls %>%
-#     purrr::pluck(paste0("mdl_type_",ref_1L_int,"_covar_mdls_tb")) %>%
-#     dplyr::mutate(Parameter = Parameter %>% purrr::map_chr(~stringr::str_replace_all(.x,"_"," ")))
 #   if(params_ls$output_type_1L_chr == "PDF"){
 #     add_to_row_ls <- list()
-#     add_to_row_ls$pos <- list(0, nrow(df))
+#     add_to_row_ls$pos <- list(0, nrow(table_df))
 #     add_to_row_ls$command <- c("Parameter & Estimate	& SE	& 95CI & R2	& Sigma\\\\\n",
 #                                paste0("\\hline\n",
 #                                       "{\\footnotesize ",
 #                                       make_scaling_text(results_ls,
 #                                                         table_1L_chr = knitr::opts_current$get("tab.id")),
 #                                       "}\n"))
-#     df$Parameter <- df$Parameter %>% purrr::map_chr(~ifelse(endsWith(.x,
+#     table_df$Parameter <- table_df$Parameter %>% purrr::map_chr(~ifelse(endsWith(.x,
 #                                                                      " model"),
 #                                                             paste0("\\textbf{",.x,"}"),.x))
 #   }else{
 #     add_to_row_ls <- NULL
 #   }
-#   df %>%
+#   table_df %>%
 #     ready4show::print_table(output_type_1L_chr = params_ls$output_type_1L_chr,
 #                             caption_1L_chr = caption_1L_chr,
 #                             mkdn_tbl_ref_1L_chr = paste0("tab:",table_1L_chr),
@@ -112,67 +163,3 @@ library(TTU)
 # }
 ```
 
-```{r results = 'asis'}
-# Adapted from: https://stackoverflow.com/questions/15036754/r-package-xtable-how-to-create-a-latextable-with-multiple-rows-and-columns-from
-get_pkg_citn <- function(pkg_nm_1L_chr){
-  citn_chr <- suppressWarnings(citation(pkg_nm_1L_chr)) %>% capture.output()
-  start_idx_1L_int <- 4
-  end_idx_1L_int <- which(citn_chr== "")[which(which(citn_chr== "")>start_idx_1L_int)[1]]-1
-  citn_1L_chr<- citn_chr[start_idx_1L_int:end_idx_1L_int] %>% paste0(collapse = "")
-  return(citn_1L_chr)
-}
-transform_tb_for_merged_col_1 <- function(df,
-                                          output_type_1L_chr = "PDF"){
-    df[[1]] <- as.character(df[[1]])
-    rle.lengths <- rle(df[[1]])$lengths
-    first <- !duplicated(df[[1]])
-    df[[1]][!first] <- ""
-    if(output_type_1L_chr == "PDF")
-      df[[1]][first] <- paste0("\\midrule\\multirow{", rle.lengths, "}{*}{\\textbf{", df[[1]][first], "}}")
-    return(df)
-}
-make_bl_fup_add_to_row_ls <-  function(df,
-                                       n_at_bl_1L_int,
-                                       n_at_fup_1L_int){
-  add_to_row_ls <- list(pos = list(-1, nrow(df)),
-                        command = c(paste("\\toprule \n",  
-                                          paste0("\\multicolumn{2}{c}{} & \\multicolumn{2}{c}{\\textbf{Baseline (N=",n_at_bl_1L_int,")}} & \\multicolumn{2}{c}{\\textbf{Follow-up (N=",n_at_fup_1L_int,")}} \\\\\n")),
-                                    paste("\\bottomrule \n"  
-                                          )
-                                    )
-                        )
-  return(add_to_row_ls)
-}
-```
-
-```{r}
-# print_table_xx <- function(data_tb,
-#                            pdf_output_lgl,
-#                            caption_chr,
-#                            label,
-#                            hline.after,
-#                            sanitize.text.function = getOption("xtable.sanitize.text.function", NULL),
-#                            addtorow){
-#    data_x_tb <- data_tb %>%
-#   xtable::xtable(caption = caption_chr, label = label)
-# if(pdf_output_lgl){
-#  data_x_tb %>%
-#   print(comment = F,
-#         floating = TRUE, #floating.environment = "sidewaystable",
-#         hline.after = hline.after,
-#         caption.placement = "top",
-#         sanitize.text.function = sanitize.text.function,
-#         add.to.row = addtorow, 
-#         include.colnames = FALSE,
-#         include.rownames=FALSE#,scalebox = 0.75
-#         ) 
-# }else{
-#   data_tb %>%
-#     kableExtra::kable(escape = F,
-#         caption = caption_chr) %>%
-#       kableExtra::kable_styling(bootstrap_options = c("striped", "hover", "condensed"), 
-#                                 full_width = F, 
-#                                 position = "left")
-# }
-# }
-```

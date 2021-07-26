@@ -1,7 +1,0 @@
----
-title: "Prediction toolkit"
-author: "Matthew Hamilton"
-date: "26/01/2021"
-output: html_document
----
-<!-- Author judgment start --><!-- Author judgment end -->
