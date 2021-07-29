@@ -40,7 +40,7 @@ csl: plos.csl
 
 ```{r results='asis', warning=F, echo = F}
 abstract_chr <- paste0(stringr::str_replace_all(stringr::str_replace_all(stringr::str_replace_all(stringr::str_replace_all(readLines('../Header/abstract.txt'),'\\\\\\\\textbf',''),'\\{','**'),'\\}','**'),'\\\\\\\\newline','\\\n')) 
-writeLines(c("**Abstract**",'\\\n',abstract_chr[1:(which(abstract_chr == "**Data:** ")-2)]))
+writeLines(c("**Abstract**",'\\\n',abstract_chr))
 ```
 
 \newpage
