@@ -8,6 +8,7 @@ output:
       - '--lua-filter=../Filters/scholarly-metadata.lua'
       - '--lua-filter=../Filters/author-info-blocks.lua'
     toc: no
+    keep_tex: true
 params:
   figures_in_body_lgl: !r T
   output_type_1L_chr: PDF
