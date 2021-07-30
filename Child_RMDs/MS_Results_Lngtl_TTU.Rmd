@@ -14,9 +14,9 @@ output: html_document
 
 <!-- Figure start -->Distribution of observed and predicted utility scores and their association from `r get_selected_mixed_mdls(results_ls)` using `r get_prefd_mdl_predrs(results_ls)` are plotted in Figure \@ref(fig:fig2)<!-- Figure end -->. <!-- Author judgment start -->
 
-`r make_lngl_ttu_with_covars_text(results_ls)`<!-- Table start --><!-- Comment - need to make the following tables conditional on covariates being evaluated -->`r make_covar_ttu_tbl_refs(params)`<!-- Table end -->. 
+`r make_lngl_ttu_with_covars_text(results_ls)`<!-- Table start --><!-- Comment - need to make the following tables conditional on covariates being evaluated -->`r make_covar_ttu_tbl_refs(params)`<!-- Table end --> 
 
-Detailed summaries of all models`r ifelse(get_nbr_of_scndry_analyses(results_ls, as_words_1L_lgl = F) >0, paste0(", including all results from the secondary analys",ifelse(get_nbr_of_scndry_analyses(results_ls, as_words_1L_lgl = F) >1,"es, ","is, "),""))`are available in the online data repository (see "Availability of data and materials").
+Detailed summaries of all models`r ifelse(get_nbr_of_scndry_analyses(results_ls, as_words_1L_lgl = F) >0, paste0(", including all results from the secondary analys",ifelse(get_nbr_of_scndry_analyses(results_ls, as_words_1L_lgl = F) >1,"es, ","is, ")),"")` are available in the online data repository (see "Availability of data and materials").
 
 ```{r, child = child_figs_ls$fig2, echo=FALSE}
 ```
