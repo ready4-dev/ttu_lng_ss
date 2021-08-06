@@ -9,7 +9,7 @@ The extension is intended for use and as the last component of TTU's reporting w
 
 In both instances, this extension is installed and deployed by a call to TTU's `write_manuscript` function. The extension adapts an existing template used to produce a manuscript for a real world study (https://www.medrxiv.org/content/10.1101/2021.07.07.21260129v2.full) and generalises it so the output is consistent with other studies undertaken with the TTU package. 
 
-The extension can produce manuscripts in PDF / LaTex (example - https://dataverse.harvard.edu/api/access/datafile/4957407) and Word (example - https://dataverse.harvard.edu/api/access/datafile/4957416). It should be noted that the Word output requires some manual editing to adapt section numbering, modify table headers and resize tables to page boundaries.
+The extension can produce manuscripts in PDF / LaTex (examples - https://dataverse.harvard.edu/api/access/datafile/4957407 and https://dataverse.harvard.edu/api/access/datafile/4957805) and Word (example - https://dataverse.harvard.edu/api/access/datafile/4957416). It should be noted that the Word output requires some manual editing to adapt section numbering, modify table headers and resize tables to page boundaries.
 
 There are two suggested workflows to further develop the algorithm-authored first draft into something that could be submitted for publication:
 
