@@ -8,7 +8,7 @@ output: html_document
 <!---BLOCK_LANDSCAPE_START--->
 
 ```{r cfscl, tab.cap='Estimated coefficients from longitudinal TTU models', tab.id = 'cfscl', results="asis"}
-print_indpnt_predrs_coefs_tbl(params,
+print_indpnt_predrs_coefs_tbl(params_ls,
                               caption_1L_chr = knitr::opts_current$get("tab.cap"),
                               mkdn_tbl_ref_1L_chr = paste0("tab:",knitr::opts_current$get("tab.id")))
 

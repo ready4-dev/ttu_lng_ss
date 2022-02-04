@@ -1,13 +1,14 @@
-title: A transfer to utility study using the R package TTU
+title: A hypothetical study using fake data
 author:
-  - Alejandra Scienceace:
-      email: fake@email.com
-      institute: [AwesomeUni]
+  - Alejandra R Scienceace:
+      email: fake_email@fake_institute.com
+      institute: [Insitute_A, Institute_B]
       correspondence: true
-  - name: Fionn Researchchamp
-    email: notareal@email.com
-    institute: [AugustInstitute]
+  - name: Fionn S Researchchamp
+    email: fake_email@made_up_org.com
+    institute: [Institute_C, Institute_B]
 institute:
-  - AwesomeUni: Awesome University, Somewhere, Earth
-  - AugustInstitute: August Institute, Elsewhere, Earth
-keywords:  some, relevant, keywords
+  - Insitute_A: Awesome University, Shanghai
+  - Institute_B: August Institution, London
+  - Institute_C: Highly Ranked Uni, Montreal
+keywords:  entirely, fake, do, not, cite
