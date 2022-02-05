@@ -36,7 +36,7 @@ output: html_document
 #                          add_to_row_ls = add_to_row_ls,
 #                          sanitize_fn = force)
 # }
-print_corls_tbl(params_ls,
+print_cors_tbl(params_ls,
                 caption_1L_chr = knitr::opts_current$get("tab.cap"),
                 mkdn_tbl_ref_1L_chr = paste0("tab:", knitr::opts_current$get("tab.id")))
 ```

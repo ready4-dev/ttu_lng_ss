@@ -2,8 +2,12 @@
 title: "All_Content"
 output: html_document
 ---
+
 ```{r echo = F}
 X <- params$X
+```
+
+```{r echo = F}
 params_ls<- list(figures_in_body_lgl = X@figures_in_body_lgl,
                  output_type_1L_chr = X@outp_formats_chr[1],
                  results_ls = X@b_SpecificResults@a_SpecificShareable@shareable_outp_ls$results_ls,
