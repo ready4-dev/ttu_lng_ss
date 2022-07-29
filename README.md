@@ -20,3 +20,5 @@ Suggested citation (bibTeX):
     year = {2022},
     note = {https://github.com/ready4-dev/ttu_lng_ss},
   }
+  
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6931146.svg)](https://doi.org/10.5281/zenodo.6931146)  
