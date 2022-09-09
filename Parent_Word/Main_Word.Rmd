@@ -30,9 +30,6 @@ graphics: yes
 csl: plos.csl
 ---
 
-```{r child="../Child_RMDs/MS_Funding.Rmd", echo=FALSE, warning=FALSE}
-```
-
 \newpage
 
 ```{r results='asis', warning=F, echo = F}

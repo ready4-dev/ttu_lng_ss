@@ -7,18 +7,24 @@ The program can produce manuscripts in PDF / LaTex (example - https://dataverse.
 
 There are two suggested workflows to further develop the algorithm-authored first draft into something that could be submitted for publication:
 
-If your planned submission format is PDF or LaTeX, you can edit the markdown files saved onto your machine when you first called `write_manuscript`. You can discover where in your project directory these have been saved by printing `results_ls$path_params_ls$paths_ls$path_to_ms_mkdn_1L_dir` from the results_ls object that was created by TTU's reporting workflow. Once you have completed your edits, you can then run `write_manuscript(results_ls = results_ls, output_type_1L_chr = "PDF")`. Both PDF and TeX files will be saved as a result of this command. 
-
-If your planned submission format is Word, you can just edit the word document rendered by `write_manuscript(results_ls = results_ls, output_type_1L_chr = "Word")`. 
-
-
 Suggested citation (bibTeX):
 
-@Manual{TTUExtension,
-    title = {Create a Draft Scientific Manuscript For A Utility Mapping Study},
-    author = {Matthew Hamilton and Caroline Gao},
-    year = {2022},
-    note = {https://github.com/ready4-dev/ttu_lng_ss},
-  }
+@software{hamilton_matthew_2022_6931146,
+  author       = {Hamilton, Matthew and
+                  Gao, Caroline},
+  title        = {{ttu\_lng\_ss: Create a Draft Scientific Manuscript 
+                   For A Utility Mapping Study}},
+  month        = jul,
+  year         = 2022,
+  note         = {{Matthew Hamilton and Caroline Gao (2022). 
+                   ttu\_lng\_ss: Create a Draft Scientific Manuscript
+                   For A Utility Mapping Study. Zenodo.
+                   https://doi.org/10.5281/zenodo.5976987. Version
+                   0.8.0.0}},
+  publisher    = {Zenodo},
+  version      = {0.8.0.0},
+  doi          = {10.5281/zenodo.5976987},
+  url          = {https://doi.org/10.5281/zenodo.5976987}
+}
   
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.6931146.svg)](https://doi.org/10.5281/zenodo.6931146)  
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.5976987.svg)](https://doi.org/10.5281/zenodo.5976987)  

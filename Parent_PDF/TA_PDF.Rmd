@@ -35,5 +35,15 @@ library(xtable)
 #options(xtable.floating = FALSE)
 options(xtable.timestamp = "")
 ```
+```{r echo = F}
+X <- params$X
+params_ls<- list(figures_in_body_lgl = X@figures_in_body_lgl,
+                 output_type_1L_chr = X@outp_formats_chr[1],
+                 results_ls = X@b_SpecificResults@a_SpecificShareable@shareable_outp_ls$results_ls,
+                 tables_in_body_lgl = X@tables_in_body_lgl)
+results_ls <- params_ls$results_ls
+
+```
+
 ```{r child="../Child_RMDs/TA_Content.Rmd", echo=FALSE, warning=FALSE}
 ```

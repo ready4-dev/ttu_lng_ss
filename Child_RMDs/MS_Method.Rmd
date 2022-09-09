@@ -48,4 +48,4 @@ We assessed the potential of our evaluated predictor`r ifelse(get_nbr_of_predrs(
 `r make_scndry_anlys_text(results_ls)`
 
 ### Software
-We undertook all our analyses using  ***R*** `r results_ls$r_version_1L_chr` [@RCitation] using the TTU package [@TTUPackage] (version `r results_ls$version_1L_chr`). 
+We undertook all our analyses using  `r X@b_SpecificResults@a_SpecificShareable@shareable_outp_ls$session_ls$R.version$version.string %>% stringr::str_sub(end=-14)` [@RCitation] using the TTU package [@TTUPackage] (version `r X@b_SpecificResults@a_SpecificShareable@shareable_outp_ls$session_ls$otherPkgs$TTU$Version`). 
