@@ -17,5 +17,13 @@ output: html_document
 ```
 ```{r child="MS_Results_Lngtl_TTU.Rmd", echo=FALSE}
 ```
-```{r child="MS_Results_Ratios.Rmd", echo=FALSE}
+```{r echo=FALSE}
+if(!is.na(results_ls$cohort_ls$n_fup_1L_dbl)){
+  ratios_rmd_1L_chr <- c("../Child_RMDs/MS_Results_Ratios.Rmd")
+}else{
+  ratios_rmd_1L_chr <- NULL
+}
+```
+
+```{r child=ratios_rmd_1L_chr, echo=FALSE}
 ```

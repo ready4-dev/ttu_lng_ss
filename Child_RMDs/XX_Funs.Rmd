@@ -9,6 +9,8 @@ library(officedown)
 library(specific)
 ```
 ```{r}
-
+# update TTU and Program version numbers and citation information in RMD files and (for version numbers) in R package
+# modify Longitudinal transfer to utility models
+# source("../../../../R/Functions.R")
 ```
 

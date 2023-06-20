@@ -12,7 +12,7 @@ output: html_document
 \newpage
 ```{r echo = F}
 if(length(results_ls$ttu_cs_ls$rf_seq_dscdng_chr) > 1){
-  ta_fig_child_chr <- "../Child_RMDs/TA_Figures.Rmd"
+  ta_fig_child_chr <- NULL #"../Child_RMDs/TA_Figures.Rmd"
 }else{
   ta_fig_child_chr <- NULL
 }
